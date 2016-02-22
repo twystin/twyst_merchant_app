@@ -1,4 +1,5 @@
 <resources>
-    <string name="app_name">merchant</string>
+    <string name="app_name">Twyst Merchants</string>
     <string name="action_settings">Settings</string>
+
 </resources>
