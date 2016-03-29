@@ -2,6 +2,8 @@ package com.twsyt.merchant.service;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.saulpower.fayeclient.FayeClient;
@@ -11,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URI;
+import java.util.StringTokenizer;
 import java.util.prefs.Preferences;
 
 public class WebSocketService extends IntentService implements FayeListener {
@@ -26,27 +29,30 @@ public class WebSocketService extends IntentService implements FayeListener {
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        // SSL bug in pre-Gingerbread devices makes websockets currently unusable
-        if (android.os.Build.VERSION.SDK_INT <= 8) return;
-
         Log.i(TAG, "Starting Web Socket");
 
-        try {
+//        try {
 
 //            String baseUrl = Preferences.getString(Preferences.KEY_FAYE_HOST, DebugActivity.PROD_FAYE_HOST);
-            String baseUrl = "http://staging.twyst.in";
+//        String baseUrl = "http://twyst.in/faye/";
+        String baseUrl = "http://192.168.0.113:3000/faye/";
 
-            URI uri = URI.create(String.format("wss://%s:443/events", baseUrl));
+//        URI uri = URI.create(String.format("wss://%s:443/events", baseUrl));
+        URI uri = URI.create(String.format("%s", baseUrl));
+        String channel = String.format("/%s", "56879bf4af76ee153f804dd3");
+        Log.d(TAG,uri + channel);
 //            String channel = String.format("/%s/**", User.getCurrentUser().getUserId());
 
-            JSONObject ext = new JSONObject();
+        JSONObject ext = new JSONObject();
 //            ext.put("authToken", User.getCurrentUser().getAuthorizationToken());
 
 //            mClient = new FayeClient(uri, channel);
-            mClient.setFayeListener(this);
-            mClient.connectToServer(ext);
+        mClient = new FayeClient(new Handler(Looper.getMainLooper()), uri, channel);
+        mClient.setFayeListener(this);
+        mClient.connectToServer(ext);
 
-        } catch (JSONException ex) {}
+
+//        } catch (JSONException ex) {}
     }
 
     @Override
@@ -67,11 +73,12 @@ public class WebSocketService extends IntentService implements FayeListener {
     @Override
     public void connectedToServer() {
         Log.i(TAG, "Connected to Server");
+        mClient.subscribe();
     }
 
     @Override
     public void disconnectedFromServer() {
-        Log.i(TAG, "Disonnected to Server");
+        Log.i(TAG, "Disonnected from Server");
     }
 
     @Override

@@ -24,7 +24,8 @@ public class OrderTrackerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return mOrderTrackInfo.size();
+        return 0;
+//        return mOrderTrackInfo.size();
     }
 
     @Override
