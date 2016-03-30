@@ -3,6 +3,7 @@ package com.twsyt.merchant;
 import android.app.Application;
 import android.content.Intent;
 
+import com.twsyt.merchant.service.HttpService;
 import com.twsyt.merchant.service.WebSocketService;
 
 /**
@@ -16,5 +17,11 @@ public class TwystApplication extends Application {
 
         Intent intent = new Intent(this, WebSocketService.class);
         startService(intent);
+
+
+        HttpService.getInstance().setup(getApplicationContext());
+
     }
+
+
 }

@@ -5,23 +5,58 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.twsyt.merchant.R;
 import com.twsyt.merchant.adapters.OrderTrackerAdapter;
+import com.twsyt.merchant.model.BaseResponse;
+import com.twsyt.merchant.model.order.OrderHistory;
+import com.twsyt.merchant.service.HttpService;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
 
 public class MainActivity extends AppCompatActivity {
 
     private ViewPager mViewPager;
+    private String mOrderID = "56fb605ce50eb9a2051171c5";
+    private String token = "HAba02nFxNIrQGreYIv9JUev078YDF2q";
+    private OrderHistory mOrderHistory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         setupToolBar();
         setup();
+        getOrder(mOrderID);
+    }
+
+    private void getOrder(String mOrderID) {
+
+        HttpService.getInstance().getOrderDetail(mOrderID, token, new Callback<BaseResponse<OrderHistory>>() {
+                    @Override
+                    public void success(BaseResponse<OrderHistory> orderHistoryBaseResponse, Response response) {
+                        if (orderHistoryBaseResponse.isResponse()) {
+                            mOrderHistory = orderHistoryBaseResponse.getData();
+                            Log.i("Order Details", String.valueOf(mOrderHistory));
+                        }
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+
+                    }
+                }
+        );
+
     }
 
     private void setup() {
@@ -61,12 +96,12 @@ public class MainActivity extends AppCompatActivity {
     public void setupToolBar() {
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        /*toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
-        });*/
+        });
     }
 }
