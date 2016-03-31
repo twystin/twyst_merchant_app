@@ -12,7 +12,6 @@ import com.twsyt.merchant.model.order.OrderHistory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -65,15 +64,21 @@ public class OrderTrackerAdapter extends FragmentStatePagerAdapter {
         return tabTitle;
     }
 
-    private ArrayList<OrderHistory> getSortedOrdersList(String s) {
-        String[] strings = Utils.getTabtoOrderStatusMapping(s);
+    /** Method to generate list of orders to be shown.
+     * This is based on the mapping of TABS and possible status of a perticular order.
+     * Check for Utils.getTabtoOrderStatusMapping for the mapping.
+     *
+     * @param tabTitle Name of the tab
+     * @return ArrayList of orders to be displayed in one perticular fragment.
+     */
+    private ArrayList<OrderHistory> getSortedOrdersList(String tabTitle) {
+        String[] strings = Utils.getTabtoOrderStatusMapping(tabTitle);
         ArrayList<OrderHistory> list = new ArrayList<>();
         if (strings != null) {
             for (String key : strings) {
                 list.addAll(mOrderStatusMap.get(key));
             }
         }
-
         Collections.sort(list, new Comparator<OrderHistory>() {
             @Override
             public int compare(OrderHistory lhs, OrderHistory rhs) {
