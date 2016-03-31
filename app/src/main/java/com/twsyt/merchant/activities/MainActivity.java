@@ -11,10 +11,14 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.twsyt.merchant.R;
+import com.twsyt.merchant.Util.OrdersDataBase;
 import com.twsyt.merchant.adapters.OrderTrackerAdapter;
 import com.twsyt.merchant.model.BaseResponse;
 import com.twsyt.merchant.model.order.OrderHistory;
 import com.twsyt.merchant.service.HttpService;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import receivers.OrderTrackerResultReceiver;
 import retrofit.Callback;
@@ -28,15 +32,19 @@ public class MainActivity extends AppCompatActivity implements OrderTrackerResul
     private String mOrderID = "56fb605ce50eb9a2051171c5";
     private String token = "HAba02nFxNIrQGreYIv9JUev078YDF2q";
     private OrderHistory mOrderHistory;
+    private OrderTrackerResultReceiver receiver;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        OrdersDataBase ordersDataBase = new OrdersDataBase(MainActivity.this);
+        HashMap<String, ArrayList<OrderHistory>> data = ordersDataBase.genOrderStatusList();
         setupToolBar();
-        setup();
+        setup(data);
         getOrder(mOrderID);
     }
 
@@ -59,10 +67,23 @@ public class MainActivity extends AppCompatActivity implements OrderTrackerResul
 
     }
 
-    private void setup() {
+    @Override
+    protected void onStart() {
+        super.onStart();
+        receiver = OrderTrackerResultReceiver.getInstance();
+        receiver.addReceiver(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        receiver.removeReceiver(this);
+    }
+
+    private void setup(HashMap<String, ArrayList<OrderHistory>> data) {
         // Setup the ViewPager
         mViewPager = (ViewPager) findViewById(R.id.orderTrackerPager);
-        OrderTrackerAdapter pagerAdapter = new OrderTrackerAdapter(getSupportFragmentManager(), null);
+        OrderTrackerAdapter pagerAdapter = new OrderTrackerAdapter(getSupportFragmentManager(), data);
         mViewPager.setAdapter(pagerAdapter);
 
         // Setup the Tab Layout

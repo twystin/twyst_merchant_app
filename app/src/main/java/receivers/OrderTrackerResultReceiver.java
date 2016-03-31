@@ -1,5 +1,6 @@
 package receivers;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -9,18 +10,24 @@ import java.util.ArrayList;
 /**
  * Created by tushar on 31/03/16.
  */
+@SuppressLint("ParcelCreator")
 public class OrderTrackerResultReceiver extends ResultReceiver {
     private ArrayList<Receiver> mReceivers;
+    private static OrderTrackerResultReceiver mOrderTrackerResultReceiver = new OrderTrackerResultReceiver(new Handler());
 
     /**
-     * Create a new ResultReceive to receive results.  Your
+     * Create a new ResultReceiver to receive results.  Your
      * {@link #onReceiveResult} method will be called from the thread running
      * <var>handler</var> if given, or from an arbitrary thread if null.
      *
      * @param handler
      */
-    public OrderTrackerResultReceiver(Handler handler) {
+    private OrderTrackerResultReceiver(Handler handler) {
         super(handler);
+    }
+
+    public static OrderTrackerResultReceiver getInstance() {
+        return mOrderTrackerResultReceiver;
     }
 
     @Override
@@ -65,6 +72,6 @@ public class OrderTrackerResultReceiver extends ResultReceiver {
      * Public interface for activities which would like to be receive results.
      */
     public interface Receiver {
-        public void onReceiveResult(int resultCode, Bundle resultData);
+        void onReceiveResult(int resultCode, Bundle resultData);
     }
 }

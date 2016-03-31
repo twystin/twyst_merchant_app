@@ -2,6 +2,7 @@ package com.twsyt.merchant.fragments;
 
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,22 +11,25 @@ import android.view.ViewGroup;
 
 import com.twsyt.merchant.R;
 import com.twsyt.merchant.Util.AppConstants;
+import com.twsyt.merchant.model.order.OrderHistory;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class OrderTrackerPageFragment extends Fragment {
 
-    private String orderTracker_type;
+    private ArrayList<OrderHistory> list;
 
     public OrderTrackerPageFragment() {
         // Required empty public constructor
     }
 
-    public static OrderTrackerPageFragment newInstance(String type) {
+    public static OrderTrackerPageFragment newInstance(ArrayList<OrderHistory> list) {
         OrderTrackerPageFragment myFragment = new OrderTrackerPageFragment();
         Bundle args = new Bundle();
-        args.putString(AppConstants.ORDER_TRACKER_TYPE, type);
+        args.putSerializable(AppConstants.ORDER_TRACKER_TYPE, list);
         myFragment.setArguments(args);
         return myFragment;
     }
@@ -33,8 +37,7 @@ public class OrderTrackerPageFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        orderTracker_type = (getArguments() != null) ? getArguments().getString(AppConstants.ORDER_TRACKER_TYPE) : "";
-
+        list = (getArguments() != null) ? (ArrayList<OrderHistory>) getArguments().getSerializable(AppConstants.ORDER_TRACKER_TYPE) : null;
     }
 
     @Override
