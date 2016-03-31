@@ -13,7 +13,7 @@ import android.view.View;
 import com.twsyt.merchant.R;
 import com.twsyt.merchant.adapters.OrderTrackerAdapter;
 import com.twsyt.merchant.model.BaseResponse;
-import com.twsyt.merchant.model.Order.OrderHistory;
+import com.twsyt.merchant.model.order.OrderHistory;
 import com.twsyt.merchant.service.HttpService;
 
 import receivers.OrderTrackerResultReceiver;
