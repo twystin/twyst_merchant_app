@@ -13,23 +13,29 @@
         android:background="@android:color/black"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="6dp">
+        android:paddingBottom="6dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="6dp">
 
         <TextView
             android:id="@+id/tv_timeStamp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
+            android:layout_weight="1"
+            android:drawablePadding="6dp"
+            android:gravity="center_vertical"
             android:text="00:00 AM"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:textSize="14dp" />
 
         <TextView
             android:id="@+id/tv_orderStatus"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="6"
             android:text="Delievered"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:textSize="14dp" />
 
     </LinearLayout>
 
@@ -69,7 +75,7 @@
 
         </LinearLayout>
 
-        <TextView
+        <!--<TextView
             android:id="@+id/tv_orderCost"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -77,7 +83,30 @@
             android:background="@drawable/order_tracker_amount_rect_bg"
             android:gravity="center"
             android:padding="6dp"
-            android:text="Rs. 0000.00" />
+            android:text="Rs. 0000.00" />-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="6dp">
+
+            <TextView
+                android:id="@+id/tv_paymentType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PAID ONLINE"
+                android:textColor="@android:color/holo_green_dark"
+                android:textSize="14dp" />
+
+            <TextView
+                android:id="@+id/tv_orderCost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="Rs. 345"
+                android:textSize="16dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -94,10 +123,12 @@
         android:gravity="center"
         android:orientation="horizontal">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_userImage"
             android:layout_width="50dp"
-            android:layout_height="50dp" />
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:src="@drawable/default_user_image" />
 
         <LinearLayout
             android:layout_width="0dp"

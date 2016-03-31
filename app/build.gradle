@@ -74,4 +74,5 @@ dependencies {
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'com.squareup.okhttp:okhttp:2.7.2'
     compile 'com.google.code.gson:gson:2.4'
+    compile 'de.hdodenhof:circleimageview:2.0.0'
 }

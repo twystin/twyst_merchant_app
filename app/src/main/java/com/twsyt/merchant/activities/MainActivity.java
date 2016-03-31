@@ -13,15 +13,16 @@ import android.view.View;
 import com.twsyt.merchant.R;
 import com.twsyt.merchant.adapters.OrderTrackerAdapter;
 import com.twsyt.merchant.model.BaseResponse;
-import com.twsyt.merchant.model.order.OrderHistory;
+import com.twsyt.merchant.model.Order.OrderHistory;
 import com.twsyt.merchant.service.HttpService;
 
+import receivers.OrderTrackerResultReceiver;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OrderTrackerResultReceiver.Receiver {
 
     private ViewPager mViewPager;
     private String mOrderID = "56fb605ce50eb9a2051171c5";
@@ -52,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void failure(RetrofitError error) {
-
                     }
                 }
         );
@@ -71,6 +71,32 @@ public class MainActivity extends AppCompatActivity {
         slidingTabs_orderTracker.setTabsFromPagerAdapter(pagerAdapter);
     }
 
+    public void setupToolBar() {
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+    }
+
+    /**
+     * Overridden method for interface:  Receiver, class: OrderTrackerResultReceiver.
+     * Provides the below given params whenever a new message arrives in service.
+     *
+     * @param resultCode
+     * @param resultData
+     */
+    @Override
+    public void onReceiveResult(int resultCode, Bundle resultData) {
+
+    }
+
+
+/*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -92,16 +118,6 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+*/
 
-    public void setupToolBar() {
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-    }
 }

@@ -19,7 +19,6 @@ public class OrderTrackerAdapter extends FragmentStatePagerAdapter {
     public OrderTrackerAdapter(FragmentManager fm, ArrayList<OrderTrackInfo> orderTrackInfo) {
         super(fm);
         this.mOrderTrackInfo = orderTrackInfo;
-
     }
 
     @Override
@@ -34,7 +33,9 @@ public class OrderTrackerAdapter extends FragmentStatePagerAdapter {
 //        OrderInfo orderInfo = mOrderTrackInfo.get(position);
 
         // a Static instance, needs to be fed with all the info.
-        return OrderTrackerPageFragment.newInstance();
+
+        String type = "";
+        return OrderTrackerPageFragment.newInstance(type);
     }
 
     @Override
