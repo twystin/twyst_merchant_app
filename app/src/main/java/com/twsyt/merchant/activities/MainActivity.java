@@ -13,12 +13,12 @@ import com.twsyt.merchant.Util.OrdersDataBase;
 import com.twsyt.merchant.adapters.OrderTrackerFragmentAdapter;
 import com.twsyt.merchant.model.BaseResponse;
 import com.twsyt.merchant.model.order.OrderHistory;
+import com.twsyt.merchant.receivers.OrderTrackerResultReceiver;
 import com.twsyt.merchant.service.HttpService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import receivers.OrderTrackerResultReceiver;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
