@@ -101,13 +101,16 @@ public class WebSocketService extends IntentService implements FayeListener {
     @Override
     public void messageReceived(JSONObject json) {
         Log.i(TAG, String.format("Received message %s", json.toString()));
-        String order_id = "";
+        String order_id = null;
         try {
             order_id = json.getString("order_id");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        getOrder(order_id);
+        if (order_id != null) {
+            getOrder(order_id);
+        }
+
     }
 
     private void getOrder(String mOrderID) {
