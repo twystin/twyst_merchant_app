@@ -1,4 +1,4 @@
-package receivers;
+package com.twsyt.merchant.receivers;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
