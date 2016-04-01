@@ -5,12 +5,15 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.twsyt.merchant.R;
 import com.twsyt.merchant.Util.AppConstants;
+import com.twsyt.merchant.adapters.OrderTrackerRVAdapter;
 import com.twsyt.merchant.model.order.OrderHistory;
 
 import java.util.ArrayList;
@@ -43,7 +46,22 @@ public class OrderTrackerPageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_order_tracker, container, false);
+        View view = inflater.inflate(R.layout.fragment_order_tracker, container, false);
+        setupRvAdapter(view);
+        return view;
+    }
+
+    /**
+     * Setup the Rv Adapter for fragment.
+     *
+     * @param view
+     */
+    private void setupRvAdapter(View view) {
+        RecyclerView rv = (RecyclerView) view.findViewById(R.id.orderTrackerRecyclerView);
+        OrderTrackerRVAdapter adapter = new OrderTrackerRVAdapter(list);
+        rv.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        rv.setLayoutManager(llm);
+        rv.setAdapter(adapter);
     }
 }

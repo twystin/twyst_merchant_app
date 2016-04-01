@@ -24,14 +24,18 @@ public class OrdersDataBase {
         this.mOrdersMap = null;
     }
 
-    public void updateOrder(String orderId, OrderHistory order) {
-        if (!mOrdersMap.containsKey(orderId)) {
-            mOrdersMap.put(orderId, order);
-        }
+    /**
+     * Adds and Order or Updates the existing order.
+     *
+     * @param orderId
+     * @param order
+     */
+    public void addOrUpdateOrder(String orderId, OrderHistory order) {
+        mOrdersMap.put(orderId, order);
         updateSharePrefs();
     }
 
-    public void addAllOrders(ArrayList<OrderHistory> allOrders) {
+    public void addOrders(ArrayList<OrderHistory> allOrders) {
         mOrdersMap.clear();
         for (OrderHistory o : allOrders) {
             mOrdersMap.put(o.getOrderID(), o);
@@ -39,7 +43,7 @@ public class OrdersDataBase {
         updateSharePrefs();
     }
 
-    public void addAllOrders() {
+    public void loadOrders() {
         mOrdersMap.clear();
         if (mSharedPreferences.getString(AppConstants.ALL_ORDERS, null) != null) {
             mOrdersMap = new Gson().fromJson(mSharedPreferences.getString(AppConstants.ALL_ORDERS, null), HashMap.class);

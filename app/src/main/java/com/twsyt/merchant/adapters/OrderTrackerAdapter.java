@@ -38,12 +38,6 @@ public class OrderTrackerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         ArrayList<OrderHistory> list = getSortedOrdersList(AppConstants.ORDER_TRACK_TABS_LIST[position]);
-
-        // Make an model object OrderInfo
-//        OrderInfo orderInfo = mOrderTrackInfo.get(position);
-
-        // a Static instance, needs to be fed with all the info.
-
         return OrderTrackerPageFragment.newInstance(list);
     }
 
@@ -64,12 +58,13 @@ public class OrderTrackerAdapter extends FragmentStatePagerAdapter {
         return tabTitle;
     }
 
-    /** Method to generate list of orders to be shown.
+    /**
+     * Method to generate list of orders to be shown.
      * This is based on the mapping of TABS and possible status of a perticular order.
      * Check for Utils.getTabtoOrderStatusMapping for the mapping.
      *
      * @param tabTitle Name of the tab
-     * @return ArrayList of orders to be displayed in one perticular fragment.
+     * @return ArrayList of orders to be displayed in one particular fragment.
      */
     private ArrayList<OrderHistory> getSortedOrdersList(String tabTitle) {
         String[] strings = Utils.getTabtoOrderStatusMapping(tabTitle);

@@ -33,4 +33,5 @@ public class AppConstants {
                     ORDER_STATUS_DELIVERED,
                     ORDER_STATUS_OTHERS
             };
+    public static final String ORDER_DETAIL = "order_detail";
 }
