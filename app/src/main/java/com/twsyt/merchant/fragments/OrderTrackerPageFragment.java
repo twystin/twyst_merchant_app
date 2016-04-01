@@ -1,6 +1,7 @@
 package com.twsyt.merchant.fragments;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -47,7 +48,8 @@ public class OrderTrackerPageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_order_tracker, container, false);
-        setupRvAdapter(view);
+        Context context = getContext();
+        setupRvAdapter(view,context);
         return view;
     }
 
@@ -56,9 +58,9 @@ public class OrderTrackerPageFragment extends Fragment {
      *
      * @param view
      */
-    private void setupRvAdapter(View view) {
+    private void setupRvAdapter(View view, Context context) {
         RecyclerView rv = (RecyclerView) view.findViewById(R.id.orderTrackerRecyclerView);
-        OrderTrackerRVAdapter adapter = new OrderTrackerRVAdapter(list);
+        OrderTrackerRVAdapter adapter = new OrderTrackerRVAdapter(list,context);
         rv.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         rv.setLayoutManager(llm);

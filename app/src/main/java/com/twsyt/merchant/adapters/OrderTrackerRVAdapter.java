@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.twsyt.merchant.R;
 import com.twsyt.merchant.Util.AppConstants;
+import com.twsyt.merchant.activities.OrderDetailsActivity;
 import com.twsyt.merchant.model.order.OrderHistory;
 
 import java.util.ArrayList;
@@ -23,9 +24,11 @@ import java.util.List;
 public class OrderTrackerRVAdapter extends RecyclerView.Adapter<OrderTrackerRVAdapter.MyViewHolder> {
 
     private ArrayList<OrderHistory> mOrderList;
+    Context mContext;
 
-    public OrderTrackerRVAdapter(List<OrderHistory> orderList) {
+    public OrderTrackerRVAdapter(List<OrderHistory> orderList, Context context) {
         this.mOrderList = (ArrayList<OrderHistory>) orderList;
+        this.mContext = context;
     }
 
     @Override
@@ -42,7 +45,7 @@ public class OrderTrackerRVAdapter extends RecyclerView.Adapter<OrderTrackerRVAd
         holder.order_tracker_row.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(); // TODO - mention class name
+                Intent intent = new Intent(mContext,OrderDetailsActivity.class); // TODO - mention class name
                 intent.putExtra(AppConstants.ORDER_DETAIL, mOrderList.get(position));
                 v.getContext().startActivity(intent);
             }
