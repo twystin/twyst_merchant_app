@@ -94,4 +94,5 @@ public class OrderTrackerFragmentAdapter extends FragmentStatePagerAdapter {
 
         return list;
     }
+
 }

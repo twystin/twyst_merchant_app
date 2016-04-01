@@ -2,14 +2,20 @@ package com.twsyt.merchant.service;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.ResultReceiver;
+import android.support.v7.widget.AppCompatPopupWindow;
 import android.util.Log;
 
 import com.saulpower.fayeclient.FayeClient;
 import com.saulpower.fayeclient.FayeClient.FayeListener;
+import com.twsyt.merchant.Util.AppConstants;
+import com.twsyt.merchant.Util.OrdersDataBase;
 import com.twsyt.merchant.model.BaseResponse;
 import com.twsyt.merchant.model.order.OrderHistory;
+import com.twsyt.merchant.receivers.OrderTrackerResultReceiver;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,7 +29,7 @@ import retrofit.client.Response;
 public class WebSocketService extends IntentService implements FayeListener {
 
     public final String TAG = this.getClass().getSimpleName();
-
+    ResultReceiver mReceiver;
     FayeClient mClient;
     private String token = "HAba02nFxNIrQGreYIv9JUev078YDF2q";
     private OrderHistory mOrderHistory;
@@ -34,7 +40,12 @@ public class WebSocketService extends IntentService implements FayeListener {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-
+        mReceiver = intent.getParcelableExtra(AppConstants.RESULT_RECEIVER);
+        // Check if receiver was properly registered.
+        if (mReceiver == null) {
+            Log.wtf(TAG, "No receiver received. There is nowhere to send the results.");
+            return;
+        }
         Log.i(TAG, "Starting Web Socket");
 
 //        try {
@@ -113,14 +124,18 @@ public class WebSocketService extends IntentService implements FayeListener {
 
     }
 
-    private void getOrder(String mOrderID) {
-
+    private void getOrder(final String mOrderID) {
         HttpService.getInstance().getOrderDetail(mOrderID, token, new Callback<BaseResponse<OrderHistory>>() {
                     @Override
                     public void success(BaseResponse<OrderHistory> orderHistoryBaseResponse, Response response) {
                         if (orderHistoryBaseResponse.isResponse()) {
                             mOrderHistory = orderHistoryBaseResponse.getData();
-                            Log.i("Order Details", String.valueOf(mOrderHistory));
+                            if (mOrderHistory != null) {
+                                updateSharedPrefs(mOrderID);
+                                callReceiver();
+                            } else {
+                                Log.d(TAG, "Order fetched is null");
+                            }
                         }
                     }
 
@@ -129,7 +144,14 @@ public class WebSocketService extends IntentService implements FayeListener {
                     }
                 }
         );
-
     }
 
+    private void callReceiver() {
+        mReceiver.send(AppConstants.NEW_DATA_AVAILABLE, null);
+    }
+
+    private void updateSharedPrefs(String orderId) {
+        OrdersDataBase db = new OrdersDataBase(getApplicationContext());
+        db.addOrUpdateOrder(orderId, mOrderHistory);
+    }
 }

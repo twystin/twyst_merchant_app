@@ -34,4 +34,7 @@ public class AppConstants {
                     ORDER_STATUS_OTHERS
             };
     public static final String ORDER_DETAIL = "order_detail";
+    public static final String RESULT_RECEIVER = "result_receiver";
+    public static final String DOWNLOADED_ORDER = "downloaded_order";
+    public static final int NEW_DATA_AVAILABLE = 1;
 }
