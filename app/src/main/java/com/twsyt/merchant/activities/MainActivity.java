@@ -6,13 +6,11 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
 import com.twsyt.merchant.R;
 import com.twsyt.merchant.Util.OrdersDataBase;
-import com.twsyt.merchant.adapters.OrderTrackerAdapter;
+import com.twsyt.merchant.adapters.OrderTrackerFragmentAdapter;
 import com.twsyt.merchant.model.BaseResponse;
 import com.twsyt.merchant.model.order.OrderHistory;
 import com.twsyt.merchant.service.HttpService;
@@ -33,7 +31,6 @@ public class MainActivity extends AppCompatActivity implements OrderTrackerResul
     private String token = "HAba02nFxNIrQGreYIv9JUev078YDF2q";
     private OrderHistory mOrderHistory;
     private OrderTrackerResultReceiver receiver;
-
 
 
     @Override
@@ -83,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements OrderTrackerResul
     private void setup(HashMap<String, ArrayList<OrderHistory>> data) {
         // Setup the ViewPager
         mViewPager = (ViewPager) findViewById(R.id.orderTrackerPager);
-        OrderTrackerAdapter pagerAdapter = new OrderTrackerAdapter(getSupportFragmentManager(), data);
+        OrderTrackerFragmentAdapter pagerAdapter = new OrderTrackerFragmentAdapter(getSupportFragmentManager(), data);
         mViewPager.setAdapter(pagerAdapter);
 
         // Setup the Tab Layout

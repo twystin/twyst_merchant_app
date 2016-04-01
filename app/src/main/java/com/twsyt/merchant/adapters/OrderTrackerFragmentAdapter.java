@@ -20,19 +20,18 @@ import java.util.HashMap;
 /**
  * Created by tushar on 19/02/16.
  */
-public class OrderTrackerAdapter extends FragmentStatePagerAdapter {
+public class OrderTrackerFragmentAdapter extends FragmentStatePagerAdapter {
     private final static String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
     private HashMap<String, ArrayList<OrderHistory>> mOrderStatusMap;
 
-    public OrderTrackerAdapter(FragmentManager fm, HashMap<String, ArrayList<OrderHistory>> orderStatusMap) {
+    public OrderTrackerFragmentAdapter(FragmentManager fm, HashMap<String, ArrayList<OrderHistory>> orderStatusMap) {
         super(fm);
         this.mOrderStatusMap = orderStatusMap;
     }
 
     @Override
     public int getCount() {
-        return 0;
-//        return mOrderTrackInfo.size();
+        return AppConstants.ORDER_TRACK_TABS_LIST.length;
     }
 
     @Override
@@ -60,7 +59,7 @@ public class OrderTrackerAdapter extends FragmentStatePagerAdapter {
 
     /**
      * Method to generate list of orders to be shown.
-     * This is based on the mapping of TABS and possible status of a perticular order.
+     * This is based on the mapping of TABS and possible status of a particular order.
      * Check for Utils.getTabtoOrderStatusMapping for the mapping.
      *
      * @param tabTitle Name of the tab
@@ -90,6 +89,4 @@ public class OrderTrackerAdapter extends FragmentStatePagerAdapter {
         });
         return list;
     }
-
-
 }
