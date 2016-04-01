@@ -60,17 +60,20 @@ public class OrdersDataBase {
 
     public HashMap<String, ArrayList<OrderHistory>> genOrderStatusList() {
         HashMap<String, ArrayList<OrderHistory>> orderStatusHashMap = new HashMap<>();
-        for (String key : mOrdersMap.keySet()) {
-            OrderHistory order = mOrdersMap.get(key);
-            String status = order.getOrderStatus();
-            if (orderStatusHashMap.containsKey(status)) {
-                orderStatusHashMap.get(status).add(order);
-            } else {
-                ArrayList<OrderHistory> arrayList = new ArrayList<>();
-                arrayList.add(order);
-                orderStatusHashMap.put(status, arrayList);
+        if (mOrdersMap != null) {
+            for (String key : mOrdersMap.keySet()) {
+                OrderHistory order = mOrdersMap.get(key);
+                String status = order.getOrderStatus();
+                if (orderStatusHashMap.containsKey(status)) {
+                    orderStatusHashMap.get(status).add(order);
+                } else {
+                    ArrayList<OrderHistory> arrayList = new ArrayList<>();
+                    arrayList.add(order);
+                    orderStatusHashMap.put(status, arrayList);
+                }
             }
         }
+
         return orderStatusHashMap;
     }
 }

@@ -45,7 +45,7 @@ public class OrderTrackerFragmentAdapter extends FragmentStatePagerAdapter {
         String tabTitle = AppConstants.ORDER_TRACK_TABS_LIST[position];
         String[] strings = Utils.getTabtoOrderStatusMapping(tabTitle);
         int count = 0;
-        if (strings != null) {
+        if ((strings != null) && (mOrderStatusMap != null)) {
             for (String key : strings) {
                 count += (mOrderStatusMap.get(key)).size();
             }
@@ -68,25 +68,28 @@ public class OrderTrackerFragmentAdapter extends FragmentStatePagerAdapter {
     private ArrayList<OrderHistory> getSortedOrdersList(String tabTitle) {
         String[] strings = Utils.getTabtoOrderStatusMapping(tabTitle);
         ArrayList<OrderHistory> list = new ArrayList<>();
-        if (strings != null) {
+        if ((strings != null) && (mOrderStatusMap != null)) {
             for (String key : strings) {
                 list.addAll(mOrderStatusMap.get(key));
             }
         }
-        Collections.sort(list, new Comparator<OrderHistory>() {
-            @Override
-            public int compare(OrderHistory lhs, OrderHistory rhs) {
-                SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-                try {
-                    Date orderDateLhs = sdf.parse(lhs.getOrderDate());
-                    Date orderDateRhs = sdf.parse(rhs.getOrderDate());
-                    return orderDateLhs.compareTo(orderDateRhs);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    return 0;
+        if (list != null) {
+            Collections.sort(list, new Comparator<OrderHistory>() {
+                @Override
+                public int compare(OrderHistory lhs, OrderHistory rhs) {
+                    SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+                    try {
+                        Date orderDateLhs = sdf.parse(lhs.getOrderDate());
+                        Date orderDateRhs = sdf.parse(rhs.getOrderDate());
+                        return orderDateLhs.compareTo(orderDateRhs);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                        return 0;
+                    }
                 }
-            }
-        });
+            });
+        }
+
         return list;
     }
 }

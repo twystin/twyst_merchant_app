@@ -82,7 +82,7 @@ public class OrderTrackerRVAdapter extends RecyclerView.Adapter<OrderTrackerRVAd
 
     @Override
     public int getItemCount() {
-        return mOrderList.size();
+        return (mOrderList != null) ? mOrderList.size() : 0;
     }
 
     /**
