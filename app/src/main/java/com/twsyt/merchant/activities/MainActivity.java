@@ -1,37 +1,27 @@
 package com.twsyt.merchant.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatPopupWindow;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 
 import com.twsyt.merchant.R;
 import com.twsyt.merchant.Util.AppConstants;
-import com.twsyt.merchant.Util.OrdersDataBase;
 import com.twsyt.merchant.adapters.OrderTrackerFragmentAdapter;
-import com.twsyt.merchant.model.BaseResponse;
-import com.twsyt.merchant.model.order.OrderHistory;
 import com.twsyt.merchant.receivers.OrderTrackerResultReceiver;
-import com.twsyt.merchant.service.HttpService;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import com.twsyt.merchant.service.WebSocketService;
 
 
 public class MainActivity extends AppCompatActivity implements OrderTrackerResultReceiver.Receiver {
 
     private ViewPager mViewPager;
-    OrderTrackerFragmentAdapter mPagerAdapter;
-    HashMap<String, ArrayList<OrderHistory>> mOrdersMap;
+    TabLayout slidingTabs_orderTracker;
 
+    OrderTrackerFragmentAdapter mPagerAdapter;
     private OrderTrackerResultReceiver receiver;
 
 
@@ -40,33 +30,40 @@ public class MainActivity extends AppCompatActivity implements OrderTrackerResul
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        OrdersDataBase ordersDataBase = new OrdersDataBase(MainActivity.this);
-        mOrdersMap = ordersDataBase.genOrderStatusList();
+
+        receiver = new OrderTrackerResultReceiver(new Handler());
+        receiver.addReceiver(this);
+
+        Intent intent = new Intent(this, WebSocketService.class);
+        intent.putExtra(AppConstants.RESULT_RECEIVER, receiver);
+        startService(intent);
+
         setupToolBar();
-        setup(mOrdersMap);
+        setupFragmentAdapter();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        receiver = OrderTrackerResultReceiver.getInstance();
-        receiver.addReceiver(this);
+//        receiver = OrderTrackerResultReceiver.getInstance();
+//        receiver = new OrderTrackerResultReceiver(new Handler());
+//        receiver.addReceiver(this);
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        receiver.removeReceiver(this);
-    }
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        receiver.removeReceiver(this);
+//    }
 
-    private void setup(HashMap<String, ArrayList<OrderHistory>> data) {
+    private void setupFragmentAdapter() {
         // Setup the ViewPager
         mViewPager = (ViewPager) findViewById(R.id.orderTrackerPager);
-        mPagerAdapter = new OrderTrackerFragmentAdapter(getSupportFragmentManager(), data);
+        mPagerAdapter = new OrderTrackerFragmentAdapter(MainActivity.this, getSupportFragmentManager());
         mViewPager.setAdapter(mPagerAdapter);
 
         // Setup the Tab Layout
-        TabLayout slidingTabs_orderTracker = (TabLayout) findViewById(R.id.slidingTabs_orderTracker);
+        slidingTabs_orderTracker = (TabLayout) findViewById(R.id.slidingTabs_orderTracker);
         slidingTabs_orderTracker.setupWithViewPager(mViewPager);
         slidingTabs_orderTracker.setTabsFromPagerAdapter(mPagerAdapter);
     }
@@ -74,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements OrderTrackerResul
     public void setupToolBar() {
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+//        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements OrderTrackerResul
     @Override
     public void onReceiveResult(int resultCode, Bundle resultData) {
         if (resultCode == AppConstants.NEW_DATA_AVAILABLE) {
-            mOrdersMap = new OrdersDataBase(MainActivity.this).genOrderStatusList();
+//            slidingTabs_orderTracker.setTabsFromPagerAdapter(mPagerAdapter);
             mPagerAdapter.notifyDataSetChanged();
         }
     }

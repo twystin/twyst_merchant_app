@@ -11,7 +11,7 @@ public class Utils {
                 return new String[]{"late_accept, late_delivered"};
 
             case AppConstants.ORDER_STATUS_PENDING:
-                return new String[]{"pending"};
+                return new String[]{"PENDING"};
 
             case AppConstants.ORDER_STATUS_LATE_ACCEPT:
                 return new String[]{"late_accept"};

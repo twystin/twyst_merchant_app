@@ -17,12 +17,6 @@ public class TwystApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        OrderTrackerResultReceiver receiver = OrderTrackerResultReceiver.getInstance();
-        Intent intent = new Intent(this, WebSocketService.class);
-        intent.putExtra(AppConstants.RESULT_RECEIVER, receiver);
-        startService(intent);
-
-
         HttpService.getInstance().setup(getApplicationContext());
 
     }

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 @SuppressLint("ParcelCreator")
 public class OrderTrackerResultReceiver extends ResultReceiver {
     private ArrayList<Receiver> mReceivers;
-    private static OrderTrackerResultReceiver mOrderTrackerResultReceiver = new OrderTrackerResultReceiver(new Handler());
+//    private static OrderTrackerResultReceiver mOrderTrackerResultReceiver = new OrderTrackerResultReceiver(new Handler());
 
     /**
      * Create a new ResultReceiver to receive results.  Your
@@ -22,17 +22,17 @@ public class OrderTrackerResultReceiver extends ResultReceiver {
      *
      * @param handler
      */
-    private OrderTrackerResultReceiver(Handler handler) {
+    public OrderTrackerResultReceiver(Handler handler) {
         super(handler);
+        mReceivers = new ArrayList<>();
     }
 
-    public static OrderTrackerResultReceiver getInstance() {
-        return mOrderTrackerResultReceiver;
-    }
+//    public static OrderTrackerResultReceiver getInstance() {
+//        return mOrderTrackerResultReceiver;
+//    }
 
     @Override
     protected void onReceiveResult(int resultCode, Bundle resultData) {
-        super.onReceiveResult(resultCode, resultData);
         if ((mReceivers != null) && (mReceivers.size() != 0)) {
             for (Receiver r : mReceivers) {
                 r.onReceiveResult(resultCode, resultData);
@@ -49,9 +49,10 @@ public class OrderTrackerResultReceiver extends ResultReceiver {
     public boolean addReceiver(Receiver receiver) {
         if ((mReceivers != null)) {
             if (mReceivers.indexOf(receiver) != -1) {
-                mReceivers.add(receiver);
-                return true;
+
             }
+                mReceivers.add(receiver);
+            return true;
         }
         return false;
     }
@@ -63,11 +64,9 @@ public class OrderTrackerResultReceiver extends ResultReceiver {
      * @return if successfully removed, return true.
      */
     public boolean removeReceiver(Receiver receiver) {
-        if ((mReceivers != null)) {
-            if (mReceivers.indexOf(receiver) != -1) {
-                mReceivers.remove(receiver);
-                return true;
-            }
+        if (mReceivers.indexOf(receiver) != -1 && (mReceivers != null)) {
+            mReceivers.remove(receiver);
+            return true;
         }
         return false;
     }

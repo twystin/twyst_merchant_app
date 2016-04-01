@@ -1,10 +1,12 @@
 package com.twsyt.merchant.adapters;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.twsyt.merchant.Util.AppConstants;
+import com.twsyt.merchant.Util.OrdersDataBase;
 import com.twsyt.merchant.Util.Utils;
 import com.twsyt.merchant.fragments.OrderTrackerPageFragment;
 import com.twsyt.merchant.model.order.OrderHistory;
@@ -21,12 +23,14 @@ import java.util.HashMap;
  * Created by tushar on 19/02/16.
  */
 public class OrderTrackerFragmentAdapter extends FragmentStatePagerAdapter {
+    private Context mContext;
     private final static String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
     private HashMap<String, ArrayList<OrderHistory>> mOrderStatusMap;
 
-    public OrderTrackerFragmentAdapter(FragmentManager fm, HashMap<String, ArrayList<OrderHistory>> orderStatusMap) {
+    public OrderTrackerFragmentAdapter(Context context, FragmentManager fm) {
         super(fm);
-        this.mOrderStatusMap = orderStatusMap;
+        this.mContext = context;
+        this.mOrderStatusMap = new OrdersDataBase(mContext).genOrderStatusList();
     }
 
     @Override
@@ -75,24 +79,28 @@ public class OrderTrackerFragmentAdapter extends FragmentStatePagerAdapter {
                     list.addAll(mOrderStatusMap.get(key));
             }
         }
-        if (list != null) {
-            Collections.sort(list, new Comparator<OrderHistory>() {
-                @Override
-                public int compare(OrderHistory lhs, OrderHistory rhs) {
-                    SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-                    try {
-                        Date orderDateLhs = sdf.parse(lhs.getOrderDate());
-                        Date orderDateRhs = sdf.parse(rhs.getOrderDate());
-                        return orderDateLhs.compareTo(orderDateRhs);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                        return 0;
-                    }
+        Collections.sort(list, new Comparator<OrderHistory>() {
+            @Override
+            public int compare(OrderHistory lhs, OrderHistory rhs) {
+                SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+                try {
+                    Date orderDateLhs = sdf.parse(lhs.getOrderDate());
+                    Date orderDateRhs = sdf.parse(rhs.getOrderDate());
+                    return orderDateLhs.compareTo(orderDateRhs);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    return 0;
                 }
-            });
-        }
+            }
+        });
 
         return list;
     }
 
+    @Override
+    public void notifyDataSetChanged() {
+        mOrderStatusMap = new OrdersDataBase(mContext.getApplicationContext()).genOrderStatusList();
+
+        super.notifyDataSetChanged();
+    }
 }

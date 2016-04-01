@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.twsyt.merchant.model.order.OrderHistory;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -21,7 +23,7 @@ public class OrdersDataBase {
     public OrdersDataBase(Context context) {
         this.mContext = context;
         this.mSharedPreferences = mContext.getSharedPreferences(AppConstants.PREFERENCE_SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        this.mOrdersMap = null;
+        loadOrders();
     }
 
     /**
@@ -44,9 +46,14 @@ public class OrdersDataBase {
     }
 
     public void loadOrders() {
-        mOrdersMap.clear();
+        if (mOrdersMap != null)
+            mOrdersMap.clear();
         if (mSharedPreferences.getString(AppConstants.ALL_ORDERS, null) != null) {
-            mOrdersMap = new Gson().fromJson(mSharedPreferences.getString(AppConstants.ALL_ORDERS, null), HashMap.class);
+            Type type = new TypeToken<HashMap<String, OrderHistory>>() {
+            }.getType();
+            mOrdersMap = new Gson().fromJson(mSharedPreferences.getString(AppConstants.ALL_ORDERS, null), type);
+        } else {
+            mOrdersMap = new HashMap<>();
         }
     }
 
