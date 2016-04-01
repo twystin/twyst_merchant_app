@@ -8,16 +8,25 @@ import android.util.Log;
 
 import com.saulpower.fayeclient.FayeClient;
 import com.saulpower.fayeclient.FayeClient.FayeListener;
+import com.twsyt.merchant.model.BaseResponse;
+import com.twsyt.merchant.model.order.OrderHistory;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URI;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class WebSocketService extends IntentService implements FayeListener {
 
     public final String TAG = this.getClass().getSimpleName();
 
     FayeClient mClient;
+    private String token = "HAba02nFxNIrQGreYIv9JUev078YDF2q";
+    private OrderHistory mOrderHistory;
 
     public WebSocketService() {
         super("WebSocketService");
@@ -38,7 +47,7 @@ public class WebSocketService extends IntentService implements FayeListener {
         URI uri = URI.create(String.format("%s", baseUrl));
 //        String channel = String.format("/%s", "56879bf4af76ee153f804dd3");
         String channel = String.format("/%s", "dktwystin");
-        Log.d(TAG,"URI : " + uri + "Channel : " + channel);
+        Log.d(TAG, "URI : " + uri + "Channel : " + channel);
 //            String channel = String.format("/%s/**", User.getCurrentUser().getUserId());
 
         JSONObject ext = new JSONObject();
@@ -92,5 +101,32 @@ public class WebSocketService extends IntentService implements FayeListener {
     @Override
     public void messageReceived(JSONObject json) {
         Log.i(TAG, String.format("Received message %s", json.toString()));
+        String order_id = "";
+        try {
+            order_id = json.getString("order_id");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        getOrder(order_id);
     }
+
+    private void getOrder(String mOrderID) {
+
+        HttpService.getInstance().getOrderDetail(mOrderID, token, new Callback<BaseResponse<OrderHistory>>() {
+                    @Override
+                    public void success(BaseResponse<OrderHistory> orderHistoryBaseResponse, Response response) {
+                        if (orderHistoryBaseResponse.isResponse()) {
+                            mOrderHistory = orderHistoryBaseResponse.getData();
+                            Log.i("Order Details", String.valueOf(mOrderHistory));
+                        }
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                    }
+                }
+        );
+
+    }
+
 }

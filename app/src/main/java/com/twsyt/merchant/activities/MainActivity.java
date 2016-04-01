@@ -27,9 +27,8 @@ import retrofit.client.Response;
 public class MainActivity extends AppCompatActivity implements OrderTrackerResultReceiver.Receiver {
 
     private ViewPager mViewPager;
-    private String mOrderID = "56fb605ce50eb9a2051171c5";
-    private String token = "HAba02nFxNIrQGreYIv9JUev078YDF2q";
-    private OrderHistory mOrderHistory;
+
+
     private OrderTrackerResultReceiver receiver;
 
 
@@ -42,26 +41,6 @@ public class MainActivity extends AppCompatActivity implements OrderTrackerResul
         HashMap<String, ArrayList<OrderHistory>> data = ordersDataBase.genOrderStatusList();
         setupToolBar();
         setup(data);
-        getOrder(mOrderID);
-    }
-
-    private void getOrder(String mOrderID) {
-
-        HttpService.getInstance().getOrderDetail(mOrderID, token, new Callback<BaseResponse<OrderHistory>>() {
-                    @Override
-                    public void success(BaseResponse<OrderHistory> orderHistoryBaseResponse, Response response) {
-                        if (orderHistoryBaseResponse.isResponse()) {
-                            mOrderHistory = orderHistoryBaseResponse.getData();
-                            Log.i("Order Details", String.valueOf(mOrderHistory));
-                        }
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-                    }
-                }
-        );
-
     }
 
     @Override
