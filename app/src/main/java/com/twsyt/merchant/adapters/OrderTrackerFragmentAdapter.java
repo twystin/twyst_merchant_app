@@ -47,7 +47,8 @@ public class OrderTrackerFragmentAdapter extends FragmentStatePagerAdapter {
         int count = 0;
         if ((strings != null) && (mOrderStatusMap != null)) {
             for (String key : strings) {
-                count += (mOrderStatusMap.get(key)).size();
+                if (mOrderStatusMap.get(key) != null)
+                    count += (mOrderStatusMap.get(key)).size();
             }
         }
 
@@ -70,7 +71,8 @@ public class OrderTrackerFragmentAdapter extends FragmentStatePagerAdapter {
         ArrayList<OrderHistory> list = new ArrayList<>();
         if ((strings != null) && (mOrderStatusMap != null)) {
             for (String key : strings) {
-                list.addAll(mOrderStatusMap.get(key));
+                if (mOrderStatusMap.get(key) != null)
+                    list.addAll(mOrderStatusMap.get(key));
             }
         }
         if (list != null) {

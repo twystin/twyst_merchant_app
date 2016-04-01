@@ -47,9 +47,11 @@ public class OrderTrackerResultReceiver extends ResultReceiver {
      * @return if successfully added, return true.
      */
     public boolean addReceiver(Receiver receiver) {
-        if (mReceivers.indexOf(receiver) != -1) {
-            mReceivers.add(receiver);
-            return true;
+        if ((mReceivers != null)) {
+            if (mReceivers.indexOf(receiver) != -1) {
+                mReceivers.add(receiver);
+                return true;
+            }
         }
         return false;
     }
@@ -61,9 +63,11 @@ public class OrderTrackerResultReceiver extends ResultReceiver {
      * @return if successfully removed, return true.
      */
     public boolean removeReceiver(Receiver receiver) {
-        if (mReceivers.indexOf(receiver) != -1) {
-            mReceivers.remove(receiver);
-            return true;
+        if ((mReceivers != null)) {
+            if (mReceivers.indexOf(receiver) != -1) {
+                mReceivers.remove(receiver);
+                return true;
+            }
         }
         return false;
     }
