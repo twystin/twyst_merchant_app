@@ -100,7 +100,10 @@ public class OrderTrackerFragmentAdapter extends FragmentStatePagerAdapter {
     @Override
     public void notifyDataSetChanged() {
         mOrderStatusMap = new OrdersDataBase(mContext.getApplicationContext()).genOrderStatusList();
-
         super.notifyDataSetChanged();
+    }
+
+    public interface ObserverDataSetChanged {
+        public void notifyDataSetChanged();
     }
 }

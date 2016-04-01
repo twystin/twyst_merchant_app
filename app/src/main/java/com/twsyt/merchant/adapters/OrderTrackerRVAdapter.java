@@ -23,7 +23,7 @@ import java.util.List;
 
 public class OrderTrackerRVAdapter extends RecyclerView.Adapter<OrderTrackerRVAdapter.MyViewHolder> {
 
-    private ArrayList<OrderHistory> mOrderList;
+    private ArrayList<OrderHistory> mOrderList = new ArrayList<>();
     Context mContext;
 
     public OrderTrackerRVAdapter(List<OrderHistory> orderList, Context context) {
@@ -45,7 +45,7 @@ public class OrderTrackerRVAdapter extends RecyclerView.Adapter<OrderTrackerRVAd
         holder.order_tracker_row.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext,OrderDetailsActivity.class); // TODO - mention class name
+                Intent intent = new Intent(mContext, OrderDetailsActivity.class); // TODO - mention class name
                 intent.putExtra(AppConstants.ORDER_DETAIL, mOrderList.get(position));
                 v.getContext().startActivity(intent);
             }
@@ -85,7 +85,15 @@ public class OrderTrackerRVAdapter extends RecyclerView.Adapter<OrderTrackerRVAd
 
     @Override
     public int getItemCount() {
-        return (mOrderList != null) ? mOrderList.size() : 0;
+        return mOrderList.size();
+    }
+
+    public ArrayList<OrderHistory> getOrderList() {
+        return mOrderList;
+    }
+
+    public void setOrderList(ArrayList<OrderHistory> mOrderList) {
+        this.mOrderList = mOrderList;
     }
 
     /**

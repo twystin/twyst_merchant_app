@@ -25,6 +25,7 @@ import java.util.ArrayList;
 public class OrderTrackerPageFragment extends Fragment {
 
     private ArrayList<OrderHistory> list;
+    private OrderTrackerRVAdapter orderTrackerRVAdapter;
 
     public OrderTrackerPageFragment() {
         // Required empty public constructor
@@ -60,10 +61,11 @@ public class OrderTrackerPageFragment extends Fragment {
      */
     private void setupRvAdapter(View view, Context context) {
         RecyclerView rv = (RecyclerView) view.findViewById(R.id.orderTrackerRecyclerView);
-        OrderTrackerRVAdapter adapter = new OrderTrackerRVAdapter(list,context);
+        orderTrackerRVAdapter = new OrderTrackerRVAdapter(list,context);
         rv.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         rv.setLayoutManager(llm);
-        rv.setAdapter(adapter);
+        rv.setAdapter(orderTrackerRVAdapter);
     }
+
 }

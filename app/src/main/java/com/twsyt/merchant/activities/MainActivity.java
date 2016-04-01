@@ -18,11 +18,8 @@ import com.twsyt.merchant.service.WebSocketService;
 
 public class MainActivity extends AppCompatActivity implements OrderTrackerResultReceiver.Receiver {
 
-    private ViewPager mViewPager;
     TabLayout slidingTabs_orderTracker;
-
     OrderTrackerFragmentAdapter mPagerAdapter;
-    private OrderTrackerResultReceiver receiver;
 
 
     @Override
@@ -31,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements OrderTrackerResul
         setContentView(R.layout.activity_main);
 
 
-        receiver = new OrderTrackerResultReceiver(new Handler());
+        OrderTrackerResultReceiver receiver = new OrderTrackerResultReceiver(new Handler());
         receiver.addReceiver(this);
 
         Intent intent = new Intent(this, WebSocketService.class);
@@ -58,26 +55,26 @@ public class MainActivity extends AppCompatActivity implements OrderTrackerResul
 
     private void setupFragmentAdapter() {
         // Setup the ViewPager
-        mViewPager = (ViewPager) findViewById(R.id.orderTrackerPager);
+        ViewPager mViewPager = (ViewPager) findViewById(R.id.orderTrackerPager);
         mPagerAdapter = new OrderTrackerFragmentAdapter(MainActivity.this, getSupportFragmentManager());
         mViewPager.setAdapter(mPagerAdapter);
+        mViewPager.getCurrentItem();
 
         // Setup the Tab Layout
         slidingTabs_orderTracker = (TabLayout) findViewById(R.id.slidingTabs_orderTracker);
         slidingTabs_orderTracker.setupWithViewPager(mViewPager);
-        slidingTabs_orderTracker.setTabsFromPagerAdapter(mPagerAdapter);
     }
 
     public void setupToolBar() {
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 //        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+//        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                onBackPressed();
+//            }
+//        });
     }
 
     /**
@@ -90,7 +87,10 @@ public class MainActivity extends AppCompatActivity implements OrderTrackerResul
     @Override
     public void onReceiveResult(int resultCode, Bundle resultData) {
         if (resultCode == AppConstants.NEW_DATA_AVAILABLE) {
-//            slidingTabs_orderTracker.setTabsFromPagerAdapter(mPagerAdapter);
+            int numTabs = slidingTabs_orderTracker.getTabCount();
+            for (int i = 0; i < numTabs; i++) {
+                slidingTabs_orderTracker.getTabAt(i).setText(mPagerAdapter.getPageTitle(i));
+            }
             mPagerAdapter.notifyDataSetChanged();
         }
     }
