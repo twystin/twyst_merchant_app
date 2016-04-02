@@ -23,7 +23,6 @@ public class OrderTrackerFragmentAdapter extends FragmentStatePagerAdapter {
     public OrderTrackerFragmentAdapter(Context context, FragmentManager fm) {
         super(fm);
         this.mContext = context;
-
     }
 
     @Override
