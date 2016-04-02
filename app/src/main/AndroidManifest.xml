@@ -3,6 +3,7 @@
     package="com.twsyt.merchant">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:name=".TwystApplication"
@@ -26,12 +27,12 @@
             android:name=".service.WebSocketService"
             android:exported="false" />
 
-        <receiver android:name=".MyReciever">
+        <!--<receiver android:name=".MyReciever">
             <intent-filter>
                 <action android:name="com.twyst.merchant.MESSAGE_RECEIVED" />
             </intent-filter>
         </receiver>
-
+-->
         <activity
             android:name=".activities.OrderDetailsActivity"
             android:label="@string/title_activity_order_details"

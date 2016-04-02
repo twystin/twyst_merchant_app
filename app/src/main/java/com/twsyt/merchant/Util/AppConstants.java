@@ -21,6 +21,7 @@ public class AppConstants {
     public static final String ORDER_STATUS_DELIVERED = "Delivered";
     public static final String ORDER_STATUS_OTHERS = "Others";
 
+    // if below sequence of strings are changed, it will lead to change of visible position of tabs in app. Please be careful.
     public static final String[] ORDER_TRACK_TABS_LIST =
             {
                     ORDER_STATUS_TAKE_ACTION,
@@ -33,9 +34,10 @@ public class AppConstants {
                     ORDER_STATUS_DELIVERED,
                     ORDER_STATUS_OTHERS
             };
+
     public static final String ORDER_DETAIL = "order_detail";
-    public static final String RESULT_RECEIVER = "result_receiver";
     public static final String INTENT_DOWNLOADED_ORDER = "downloaded_order";
     public static final String NEW_DATA_AVAILABLE = "new_data_available";
     public static final int DOWNLOAD_SUCCESS = 1;
+    public static final boolean IS_DEVELOPMENT = true;
 }

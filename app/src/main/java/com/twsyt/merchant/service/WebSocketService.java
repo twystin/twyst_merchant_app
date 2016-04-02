@@ -2,21 +2,17 @@ package com.twsyt.merchant.service;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.ResultReceiver;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.AppCompatPopupWindow;
 import android.util.Log;
 
 import com.saulpower.fayeclient.FayeClient;
 import com.saulpower.fayeclient.FayeClient.FayeListener;
 import com.twsyt.merchant.Util.AppConstants;
-import com.twsyt.merchant.Util.OrdersDataBase;
+import com.twsyt.merchant.Util.OrdersDataBaseSingleTon;
 import com.twsyt.merchant.model.BaseResponse;
 import com.twsyt.merchant.model.order.OrderHistory;
-import com.twsyt.merchant.receivers.OrderTrackerResultReceiver;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,6 +62,12 @@ public class WebSocketService extends IntentService implements FayeListener {
 
 
 //        } catch (JSONException ex) {}
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        OrdersDataBaseSingleTon.getInstance(WebSocketService.this).storeInSharedPrefs();
     }
 
     @Override
@@ -126,7 +128,7 @@ public class WebSocketService extends IntentService implements FayeListener {
                         if (orderHistoryBaseResponse.isResponse()) {
                             mOrderHistory = orderHistoryBaseResponse.getData();
                             if (mOrderHistory != null) {
-                                updateSharedPrefs(mOrderID);
+                                updateOrdersDb(mOrderID);
                                 callReceiver(AppConstants.DOWNLOAD_SUCCESS);
                             } else {
                                 Log.d(TAG, "Order fetched is null");
@@ -141,15 +143,28 @@ public class WebSocketService extends IntentService implements FayeListener {
         );
     }
 
+    /**
+     * Make changes to the SingleTon Orders DB object as per the orderId.
+     *
+     * @param orderId Id of the order
+     */
+    private void updateOrdersDb(String orderId) {
+        OrdersDataBaseSingleTon.getInstance(WebSocketService.this).addOrUpdateOrder(orderId, mOrderHistory);
+    }
+
+    /**
+     * BroadCast the message. Any activity with this LocalBroadCast manager will be notified of new downloaded data.
+     *
+     * @param resultCode 1: success, 0: failure
+     */
     private void callReceiver(int resultCode) {
         Intent intent = new Intent(AppConstants.INTENT_DOWNLOADED_ORDER);
         intent.putExtra(AppConstants.NEW_DATA_AVAILABLE, resultCode);
         LocalBroadcastManager.getInstance(WebSocketService.this).sendBroadcast(intent);
-//        mReceiver.send(AppConstants.NEW_DATA_AVAILABLE, null);
     }
 
-    private void updateSharedPrefs(String orderId) {
-        OrdersDataBase db = new OrdersDataBase(getApplicationContext());
-        db.addOrUpdateOrder(orderId, mOrderHistory);
-    }
+    /**
+     * Store all the current orders in SharedPreferences before the service is destroyed.
+     */
+
 }

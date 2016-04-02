@@ -6,17 +6,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.twsyt.merchant.Util.AppConstants;
-import com.twsyt.merchant.Util.OrdersDataBase;
+import com.twsyt.merchant.Util.OrdersDataBaseSingleTon;
 import com.twsyt.merchant.Util.Utils;
 import com.twsyt.merchant.fragments.OrderTrackerPageFragment;
 import com.twsyt.merchant.model.order.OrderHistory;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -43,17 +38,8 @@ public class OrderTrackerFragmentAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        HashMap<String, ArrayList<OrderHistory>> orderStatusMap = new OrdersDataBase(mContext).genOrderStatusList();
         String tabTitle = AppConstants.ORDER_TRACK_TABS_LIST[position];
-        String[] strings = Utils.getTabtoOrderStatusMapping(tabTitle);
-        int count = 0;
-        if ((strings != null) && (orderStatusMap != null)) {
-            for (String key : strings) {
-                if (orderStatusMap.get(key) != null)
-                    count += (orderStatusMap.get(key)).size();
-            }
-        }
-
+        int count = OrdersDataBaseSingleTon.getInstance(mContext).genOrderStatusList(tabTitle).size();
         if (count != 0) {
             return tabTitle + "(" + count + ")";
         }

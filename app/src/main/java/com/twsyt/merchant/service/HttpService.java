@@ -8,6 +8,8 @@ import com.twsyt.merchant.Util.AppConstants;
 import com.twsyt.merchant.model.BaseResponse;
 import com.twsyt.merchant.model.order.OrderHistory;
 
+import java.util.ArrayList;
+
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.android.AndroidLog;
@@ -36,7 +38,7 @@ public class HttpService {
         okHttpClient.setCache(cache);
         RestAdapter jsonRestAdapter = new RestAdapter.Builder()
                 .setLogLevel(RestAdapter.LogLevel.FULL).setLog(new AndroidLog("Retrofit"))
-//                .setLogLevel((AppConstants.IS_DEVELOPMENT) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
+                .setLogLevel((AppConstants.IS_DEVELOPMENT) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
                 .setEndpoint(AppConstants.HOST)
                 .setClient(okClient)
                 .build();
@@ -49,6 +51,10 @@ public class HttpService {
 
     public void getOrderDetail(String orderID, String token, Callback<BaseResponse<OrderHistory>> callback) {
         twystService.getOrderDetail(orderID, token, callback);
+    }
+
+    public void getAllOrders(String orderId, String token, Callback<BaseResponse<ArrayList<OrderHistory>>> callback) {
+        twystService.getAllOrders(orderId, token, callback);
     }
 
 }

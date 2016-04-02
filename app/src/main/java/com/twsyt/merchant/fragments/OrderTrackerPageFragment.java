@@ -1,9 +1,7 @@
 package com.twsyt.merchant.fragments;
 
 
-import android.content.Context;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,7 +13,7 @@ import android.view.ViewGroup;
 
 import com.twsyt.merchant.R;
 import com.twsyt.merchant.Util.AppConstants;
-import com.twsyt.merchant.Util.OrdersDataBase;
+import com.twsyt.merchant.Util.OrdersDataBaseSingleTon;
 import com.twsyt.merchant.Util.Utils;
 import com.twsyt.merchant.adapters.OrderTrackerRVAdapter;
 import com.twsyt.merchant.model.order.OrderHistory;
@@ -32,13 +30,11 @@ import java.util.HashMap;
  * A simple {@link Fragment} subclass.
  */
 public class OrderTrackerPageFragment extends Fragment {
-    private final static String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 
     private final String LOG_TAG = OrderTrackerPageFragment.this.getClass().getSimpleName();
     private int mPosition;
     private RecyclerView rv;
     private OrderTrackerRVAdapter orderTrackerRVAdapter;
-    private HashMap<String, ArrayList<OrderHistory>> mOrderStatusMap;
 
     public OrderTrackerPageFragment() {
         // Required empty public constructor
@@ -83,8 +79,7 @@ public class OrderTrackerPageFragment extends Fragment {
     }
 
     private void setAdapter() {
-        mOrderStatusMap = new OrdersDataBase(getContext()).genOrderStatusList();
-        ArrayList<OrderHistory> orderList = getSortedOrdersList(AppConstants.ORDER_TRACK_TABS_LIST[mPosition]);
+        ArrayList<OrderHistory> orderList = OrdersDataBaseSingleTon.getInstance(getContext()).getSortedOrdersList(AppConstants.ORDER_TRACK_TABS_LIST[mPosition]);
         orderTrackerRVAdapter = new OrderTrackerRVAdapter(orderList, getContext());
         rv.setAdapter(orderTrackerRVAdapter);
     }
@@ -94,37 +89,4 @@ public class OrderTrackerPageFragment extends Fragment {
         Log.d(LOG_TAG, "Checking for updateList call");
     }
 
-    /**
-     * Method to generate list of orders to be shown.
-     * This is based on the mapping of TABS and possible status of a particular order.
-     * Check for Utils.getTabtoOrderStatusMapping for the mapping.
-     *
-     * @param tabTitle Name of the tab
-     * @return ArrayList of orders to be displayed in one particular fragment.
-     */
-    private ArrayList<OrderHistory> getSortedOrdersList(String tabTitle) {
-        String[] strings = Utils.getTabtoOrderStatusMapping(tabTitle);
-        ArrayList<OrderHistory> list = new ArrayList<>();
-        if ((strings != null) && (mOrderStatusMap != null)) {
-            for (String key : strings) {
-                if (mOrderStatusMap.get(key) != null)
-                    list.addAll(mOrderStatusMap.get(key));
-            }
-        }
-        Collections.sort(list, new Comparator<OrderHistory>() {
-            @Override
-            public int compare(OrderHistory lhs, OrderHistory rhs) {
-                SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-                try {
-                    Date orderDateLhs = sdf.parse(lhs.getOrderDate());
-                    Date orderDateRhs = sdf.parse(rhs.getOrderDate());
-                    return orderDateRhs.compareTo(orderDateLhs);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    return 0;
-                }
-            }
-        });
-        return list;
-    }
 }
