@@ -39,7 +39,15 @@ public class OrderTrackerFragmentAdapter extends FragmentStatePagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         String tabTitle = AppConstants.ORDER_TRACK_TABS_LIST[position];
-        int count = OrdersDataBaseSingleTon.getInstance(mContext).genOrderStatusList(tabTitle).size();
+        String[] actualStatus = Utils.getTabtoOrderStatusMapping(tabTitle);
+        int count = 0;
+        if (actualStatus != null) {
+            for (String s : actualStatus) {
+                ArrayList<String> temp = OrdersDataBaseSingleTon.getInstance(mContext).getOrderStatusMap().get(s);
+                if (temp != null)
+                    count += temp.size();
+            }
+        }
         if (count != 0) {
             return tabTitle + "(" + count + ")";
         }
