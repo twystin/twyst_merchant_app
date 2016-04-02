@@ -24,13 +24,11 @@ import java.util.HashMap;
  */
 public class OrderTrackerFragmentAdapter extends FragmentStatePagerAdapter {
     private Context mContext;
-    private final static String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
-    private HashMap<String, ArrayList<OrderHistory>> mOrderStatusMap;
 
     public OrderTrackerFragmentAdapter(Context context, FragmentManager fm) {
         super(fm);
         this.mContext = context;
-        this.mOrderStatusMap = new OrdersDataBase(mContext).genOrderStatusList();
+
     }
 
     @Override
@@ -40,19 +38,19 @@ public class OrderTrackerFragmentAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        ArrayList<OrderHistory> list = getSortedOrdersList(AppConstants.ORDER_TRACK_TABS_LIST[position]);
-        return OrderTrackerPageFragment.newInstance(list);
+        return OrderTrackerPageFragment.newInstance(position);
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
+        HashMap<String, ArrayList<OrderHistory>> orderStatusMap = new OrdersDataBase(mContext).genOrderStatusList();
         String tabTitle = AppConstants.ORDER_TRACK_TABS_LIST[position];
         String[] strings = Utils.getTabtoOrderStatusMapping(tabTitle);
         int count = 0;
-        if ((strings != null) && (mOrderStatusMap != null)) {
+        if ((strings != null) && (orderStatusMap != null)) {
             for (String key : strings) {
-                if (mOrderStatusMap.get(key) != null)
-                    count += (mOrderStatusMap.get(key)).size();
+                if (orderStatusMap.get(key) != null)
+                    count += (orderStatusMap.get(key)).size();
             }
         }
 
@@ -62,48 +60,4 @@ public class OrderTrackerFragmentAdapter extends FragmentStatePagerAdapter {
         return tabTitle;
     }
 
-    /**
-     * Method to generate list of orders to be shown.
-     * This is based on the mapping of TABS and possible status of a particular order.
-     * Check for Utils.getTabtoOrderStatusMapping for the mapping.
-     *
-     * @param tabTitle Name of the tab
-     * @return ArrayList of orders to be displayed in one particular fragment.
-     */
-    private ArrayList<OrderHistory> getSortedOrdersList(String tabTitle) {
-        String[] strings = Utils.getTabtoOrderStatusMapping(tabTitle);
-        ArrayList<OrderHistory> list = new ArrayList<>();
-        if ((strings != null) && (mOrderStatusMap != null)) {
-            for (String key : strings) {
-                if (mOrderStatusMap.get(key) != null)
-                    list.addAll(mOrderStatusMap.get(key));
-            }
-        }
-        Collections.sort(list, new Comparator<OrderHistory>() {
-            @Override
-            public int compare(OrderHistory lhs, OrderHistory rhs) {
-                SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-                try {
-                    Date orderDateLhs = sdf.parse(lhs.getOrderDate());
-                    Date orderDateRhs = sdf.parse(rhs.getOrderDate());
-                    return orderDateLhs.compareTo(orderDateRhs);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    return 0;
-                }
-            }
-        });
-
-        return list;
-    }
-
-    @Override
-    public void notifyDataSetChanged() {
-        mOrderStatusMap = new OrdersDataBase(mContext.getApplicationContext()).genOrderStatusList();
-        super.notifyDataSetChanged();
-    }
-
-    public interface ObserverDataSetChanged {
-        public void notifyDataSetChanged();
-    }
 }

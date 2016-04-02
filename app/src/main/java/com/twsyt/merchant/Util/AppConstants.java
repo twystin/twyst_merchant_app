@@ -35,6 +35,7 @@ public class AppConstants {
             };
     public static final String ORDER_DETAIL = "order_detail";
     public static final String RESULT_RECEIVER = "result_receiver";
-    public static final String DOWNLOADED_ORDER = "downloaded_order";
-    public static final int NEW_DATA_AVAILABLE = 1;
+    public static final String INTENT_DOWNLOADED_ORDER = "downloaded_order";
+    public static final String NEW_DATA_AVAILABLE = "new_data_available";
+    public static final int DOWNLOAD_SUCCESS = 1;
 }

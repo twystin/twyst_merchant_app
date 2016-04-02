@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.ResultReceiver;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.AppCompatPopupWindow;
 import android.util.Log;
 
@@ -29,7 +30,6 @@ import retrofit.client.Response;
 public class WebSocketService extends IntentService implements FayeListener {
 
     public final String TAG = this.getClass().getSimpleName();
-    ResultReceiver mReceiver;
     FayeClient mClient;
     private String token = "HAba02nFxNIrQGreYIv9JUev078YDF2q";
     private OrderHistory mOrderHistory;
@@ -40,12 +40,7 @@ public class WebSocketService extends IntentService implements FayeListener {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        mReceiver = intent.getParcelableExtra(AppConstants.RESULT_RECEIVER);
-        // Check if receiver was properly registered.
-        if (mReceiver == null) {
-            Log.wtf(TAG, "No receiver received. There is nowhere to send the results.");
-            return;
-        }
+
         Log.i(TAG, "Starting Web Socket");
 
 //        try {
@@ -132,7 +127,7 @@ public class WebSocketService extends IntentService implements FayeListener {
                             mOrderHistory = orderHistoryBaseResponse.getData();
                             if (mOrderHistory != null) {
                                 updateSharedPrefs(mOrderID);
-                                callReceiver();
+                                callReceiver(AppConstants.DOWNLOAD_SUCCESS);
                             } else {
                                 Log.d(TAG, "Order fetched is null");
                             }
@@ -146,8 +141,11 @@ public class WebSocketService extends IntentService implements FayeListener {
         );
     }
 
-    private void callReceiver() {
-        mReceiver.send(AppConstants.NEW_DATA_AVAILABLE, null);
+    private void callReceiver(int resultCode) {
+        Intent intent = new Intent(AppConstants.INTENT_DOWNLOADED_ORDER);
+        intent.putExtra(AppConstants.NEW_DATA_AVAILABLE, resultCode);
+        LocalBroadcastManager.getInstance(WebSocketService.this).sendBroadcast(intent);
+//        mReceiver.send(AppConstants.NEW_DATA_AVAILABLE, null);
     }
 
     private void updateSharedPrefs(String orderId) {

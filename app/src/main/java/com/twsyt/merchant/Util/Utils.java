@@ -8,28 +8,31 @@ public class Utils {
     public static String[] getTabtoOrderStatusMapping(String tab) {
         switch (tab) {
             case AppConstants.ORDER_STATUS_TAKE_ACTION:
-                return new String[]{"late_accept, late_delivered"};
+                return new String[]{"LATE_ACCEPT, LATE_DELIVERY"};
 
             case AppConstants.ORDER_STATUS_PENDING:
                 return new String[]{"PENDING"};
 
             case AppConstants.ORDER_STATUS_LATE_ACCEPT:
-                return new String[]{"late_accept"};
+                return new String[]{"LATE_ACCEPT"};
+
+            case AppConstants.ORDER_STATUS_ACCEPTED:
+                return new String[]{"ACCEPTED"};
 
             case AppConstants.ORDER_STATUS_DISPATCHED:
-                return new String[]{"dispatched"};
+                return new String[]{"DISPATCHED"};
 
             case AppConstants.ORDER_STATUS_ASSUMED_DELIVERED:
-                return new String[]{"assumed_delivered"};
+                return new String[]{"ASSUMED_DELIVERED"};
 
             case AppConstants.ORDER_STATUS_LATE_DELIVERY:
-                return new String[]{"late_delivery"};
+                return new String[]{"LATE_DELIVERY"};
 
             case AppConstants.ORDER_STATUS_DELIVERED:
-                return new String[]{"delivered"};
+                return new String[]{"DELIVERED"};
 
             case AppConstants.ORDER_STATUS_OTHERS:
-                return new String[]{"abandoned", "rejected", "closed"};
+                return new String[]{"ABANDONED", "REJECTED", "CLOSED"};
         }
         return null;
     }
