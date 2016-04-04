@@ -9,10 +9,8 @@ import com.twsyt.merchant.Util.AppConstants;
 import com.twsyt.merchant.Util.OrdersDataBaseSingleTon;
 import com.twsyt.merchant.Util.Utils;
 import com.twsyt.merchant.fragments.OrderTrackerPageFragment;
-import com.twsyt.merchant.model.order.OrderHistory;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by tushar on 19/02/16.
@@ -52,5 +50,4 @@ public class OrderTrackerFragmentAdapter extends FragmentStatePagerAdapter {
         }
         return tabTitle;
     }
-
 }

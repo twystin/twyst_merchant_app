@@ -48,7 +48,10 @@ public class WebSocketService extends IntentService implements FayeListener {
 //        URI uri = URI.create(String.format("wss://%s:443/events", baseUrl));
         URI uri = URI.create(String.format("%s", baseUrl));
 //        String channel = String.format("/%s", "56879bf4af76ee153f804dd3");
-        String channel = String.format("/%s", "dktwystin");
+        String channelIntent = intent.getStringExtra(AppConstants.INTENT_EXTRA_CHANNEL_NAME);
+
+//        String channel = String.format("/%s", "dktwystin");
+        String channel = String.format("/%s", channelIntent.replace("@", "").replace(".", ""));
         Log.d(TAG, "URI : " + uri + "Channel : " + channel);
 //            String channel = String.format("/%s/**", User.getCurrentUser().getUserId());
 
@@ -64,6 +67,9 @@ public class WebSocketService extends IntentService implements FayeListener {
 //        } catch (JSONException ex) {}
     }
 
+    /**
+     * Store all the current orders in SharedPreferences before the service is destroyed.
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -162,9 +168,4 @@ public class WebSocketService extends IntentService implements FayeListener {
         intent.putExtra(AppConstants.NEW_DATA_AVAILABLE, resultCode);
         LocalBroadcastManager.getInstance(WebSocketService.this).sendBroadcast(intent);
     }
-
-    /**
-     * Store all the current orders in SharedPreferences before the service is destroyed.
-     */
-
 }

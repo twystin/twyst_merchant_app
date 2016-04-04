@@ -40,4 +40,29 @@ public class AppConstants {
     public static final String NEW_DATA_AVAILABLE = "new_data_available";
     public static final int DOWNLOAD_SUCCESS = 1;
     public static final boolean IS_DEVELOPMENT = true;
+
+    // Role Book
+//    1    Root (Twyst Owners and Managers)
+//    2    Admin (Our sales persons or dev guys /account manager)
+//    3    Merchant / customer (The owner of Outlet)
+//    4    Marketing Manager (Manage all Outlets and Users)
+//    5    Outlet Manager (Outlet specific managers)
+//    6    User (The phone app User)
+//    7    OTP users
+//    8    Public (Anonymous Users)
+    public static final int ROLE_ROOT = 1;
+    public static final int ROLE_ADMIN = 2;
+    public static final int ROLE_MERCHANT = 3;
+    public static final int ROLE_MARKETING_MANAGER = 4;
+    public static final int ROLE_OUTLET_MANAGER = 5;
+    public static final int ROLE_USER = 6;
+    public static final int ROLE_OTP_USERS = 7;
+    public static final int ROLE_PUBLIC_ANON = 8;
+
+    public static final String INTENT_EXTRA_CHANNEL_NAME = "channel";
+    public static final String LOGIN_TOKEN = "login_token";
+    public static final String CHANNEL_SUBSCRIPTION = "channel_to_be_subscribed_to";
+    public static final String MY_ROLE_IS = "my_role_is";
+    public static final String LOGIN_RESPONSE_JSON = "login_response_json";
+    public static final String LOGGED_IN_ATLEAST_ONCE = "login_status" ;
 }

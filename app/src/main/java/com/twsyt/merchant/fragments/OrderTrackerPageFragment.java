@@ -33,7 +33,6 @@ public class OrderTrackerPageFragment extends Fragment {
 
     private final String LOG_TAG = OrderTrackerPageFragment.this.getClass().getSimpleName();
     private int mPosition;
-    private RecyclerView rv;
     private OrderTrackerRVAdapter orderTrackerRVAdapter;
 
     public OrderTrackerPageFragment() {
@@ -69,24 +68,22 @@ public class OrderTrackerPageFragment extends Fragment {
      */
     private void setupRvAdapter(View view) {
 
-        rv = (RecyclerView) view.findViewById(R.id.orderTrackerRecyclerView);
+        RecyclerView rv = (RecyclerView) view.findViewById(R.id.orderTrackerRecyclerView);
         rv.setHasFixedSize(true);
 
         LinearLayoutManager llm = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         rv.setLayoutManager(llm);
-
-        setAdapter();
-    }
-
-    private void setAdapter() {
-        ArrayList<OrderHistory> orderList = OrdersDataBaseSingleTon.getInstance(getContext()).getSortedOrdersList(AppConstants.ORDER_TRACK_TABS_LIST[mPosition]);
-        orderTrackerRVAdapter = new OrderTrackerRVAdapter(orderList, getContext());
+        orderTrackerRVAdapter = new OrderTrackerRVAdapter(getContext());
+        updateList();
         rv.setAdapter(orderTrackerRVAdapter);
     }
 
     public void updateList() {
-        setAdapter();
         Log.d(LOG_TAG, "Checking for updateList call");
+        ArrayList<OrderHistory> orderList = OrdersDataBaseSingleTon.getInstance(getContext())
+                .getSortedOrdersList(AppConstants.ORDER_TRACK_TABS_LIST[mPosition]);
+        orderTrackerRVAdapter.getOrderList().clear();
+        orderTrackerRVAdapter.getOrderList().addAll(orderList);
+        orderTrackerRVAdapter.notifyDataSetChanged();
     }
-
 }

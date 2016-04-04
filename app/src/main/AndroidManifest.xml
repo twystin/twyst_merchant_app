@@ -3,7 +3,7 @@
     package="com.twsyt.merchant">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".TwystApplication"
@@ -15,10 +15,14 @@
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".activities.LoginActivity"
+            android:label="None"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -27,21 +31,24 @@
             android:name=".service.WebSocketService"
             android:exported="false" />
 
-        <!--<receiver android:name=".MyReciever">
+        <!--
+        <receiver android:name=".MyReciever">
             <intent-filter>
                 <action android:name="com.twyst.merchant.MESSAGE_RECEIVED" />
             </intent-filter>
         </receiver>
--->
+        -->
         <activity
             android:name=".activities.OrderDetailsActivity"
             android:label="@string/title_activity_order_details"
             android:theme="@style/AppTheme">
-        <!--<intent-filter>-->
-            <!--<action android:name="android.intent.action.MAIN" />-->
 
-            <!--<category android:name="android.intent.category.LAUNCHER" />-->
-        <!--</intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
     </application>
 

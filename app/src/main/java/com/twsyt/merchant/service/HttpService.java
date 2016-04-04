@@ -6,6 +6,8 @@ import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
 import com.twsyt.merchant.Util.AppConstants;
 import com.twsyt.merchant.model.BaseResponse;
+import com.twsyt.merchant.model.Login;
+import com.twsyt.merchant.model.LoginResponse;
 import com.twsyt.merchant.model.order.OrderHistory;
 
 import java.util.ArrayList;
@@ -53,8 +55,15 @@ public class HttpService {
         twystService.getOrderDetail(orderID, token, callback);
     }
 
-    public void getAllOrders(String orderId, String token, Callback<BaseResponse<ArrayList<OrderHistory>>> callback) {
-        twystService.getAllOrders(orderId, token, callback);
+    public void getAllOrdersOutlet(String orderId, String token, Callback<BaseResponse<ArrayList<OrderHistory>>> callback) {
+        twystService.getAllOrdersOutlet(orderId, token, callback);
     }
 
+    public void twystLogin(Login login, Callback<BaseResponse<LoginResponse>> callback) {
+        twystService.twystLogin(login, callback);
+    }
+
+    public void getAllOrdersAM(String token, Callback<BaseResponse<ArrayList<OrderHistory>>> callback) {
+        twystService.getAllOrdersAM(token, callback);
+    }
 }

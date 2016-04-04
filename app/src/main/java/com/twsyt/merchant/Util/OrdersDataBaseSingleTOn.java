@@ -5,10 +5,13 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.ArrayMap;
+import android.view.ViewDebug;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.twsyt.merchant.model.BaseResponse;
 import com.twsyt.merchant.model.order.OrderHistory;
+import com.twsyt.merchant.service.HttpService;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
@@ -18,6 +21,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Singleton Class for holding data(order information.)
@@ -33,8 +40,13 @@ import java.util.HashMap;
 public class OrdersDataBaseSingleTon {
     private final static String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 
-    private Context mContext;
-    private SharedPreferences mSharedPreferences;
+    private final Context mContext;
+
+    public SharedPreferences getSharedPreferences() {
+        return mSharedPreferences;
+    }
+
+    private final SharedPreferences mSharedPreferences;
     private ArrayMap<String, OrderHistory> mOrderIdMap;
     private ArrayMap<String, ArrayList<String>> mOrderStatusMap;
 
@@ -59,6 +71,11 @@ public class OrdersDataBaseSingleTon {
     private void loadOrders() {
         // Load data from server if internet is present else from sharedPrefs.
         if (Utils.isNetworkAvailable(mContext)) {
+            String token = mSharedPreferences.getString(AppConstants.LOGIN_TOKEN, "");
+            int role = mSharedPreferences.getInt(AppConstants.MY_ROLE_IS, 0);
+            if (role != 0 && !token.equals("")) {
+                syncWithServer(role, token);
+            }
         } else {
         }
 
@@ -70,6 +87,27 @@ public class OrdersDataBaseSingleTon {
             mOrderIdMap = new ArrayMap<>();
         }
         genOrderStatusMap();
+    }
+
+    private void syncWithServer(int role, String token) {
+        switch (role) {
+            case AppConstants.ROLE_MERCHANT:
+                break;
+
+            case AppConstants.ROLE_ADMIN:
+                HttpService.getInstance().getAllOrdersAM(token, new Callback<BaseResponse<ArrayList<OrderHistory>>>() {
+                    @Override
+                    public void success(BaseResponse<ArrayList<OrderHistory>> arrayListBaseResponse, Response response) {
+
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+
+                    }
+                });
+                break;
+        }
     }
 
     private void genOrderStatusMap() {
