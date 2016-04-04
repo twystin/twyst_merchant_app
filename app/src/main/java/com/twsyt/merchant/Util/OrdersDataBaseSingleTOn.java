@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.ArrayMap;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -19,15 +20,23 @@ import java.util.Date;
 import java.util.HashMap;
 
 /**
- * Created by tushar on 31/03/16.
+ * Singleton Class for holding data(order information.)
+ * This needs to be thread safe as data will be loaded in WebSocketService and read by activities.
+ * <p>
+ * Data is stored in two formats.
+ * 1. Map(mOrderIdMap)      - key: orderId,     Val: Order Info object
+ * 2. Map(mOrderStatusMap)  - key: orderStatus, Val: orderId
+ * <p>
+ * Before the WebSocketService is destroyed, all the orders present in mOrderIdMap are stored in SharedPreferences for later use.
+ * On a new start, data is loaded from Server, if network is available else from SharedPreferences.
  */
 public class OrdersDataBaseSingleTon {
     private final static String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 
     private Context mContext;
     private SharedPreferences mSharedPreferences;
-    private HashMap<String, OrderHistory> mOrderIdMap;
-    private HashMap<String, ArrayList<String>> mOrderStatusMap;
+    private ArrayMap<String, OrderHistory> mOrderIdMap;
+    private ArrayMap<String, ArrayList<String>> mOrderStatusMap;
 
     private static final Object mLock = new Object();
     private static OrdersDataBaseSingleTon mInstance;
@@ -49,23 +58,23 @@ public class OrdersDataBaseSingleTon {
 
     private void loadOrders() {
         // Load data from server if internet is present else from sharedPrefs.
-        if (isNetworkAvailable()) {
+        if (Utils.isNetworkAvailable(mContext)) {
         } else {
         }
 
         if (mSharedPreferences.getString(AppConstants.ALL_ORDERS, null) != null) {
-            Type type = new TypeToken<HashMap<String, OrderHistory>>() {
+            Type type = new TypeToken<ArrayMap<String, OrderHistory>>() {
             }.getType();
             mOrderIdMap = new Gson().fromJson(mSharedPreferences.getString(AppConstants.ALL_ORDERS, null), type);
         } else {
-            mOrderIdMap = new HashMap<>();
+            mOrderIdMap = new ArrayMap<>();
         }
         genOrderStatusMap();
     }
 
     private void genOrderStatusMap() {
         if (mOrderStatusMap == null) {
-            mOrderStatusMap = new HashMap<>();
+            mOrderStatusMap = new ArrayMap<>();
         }
         for (String key : mOrderIdMap.keySet()) {
             OrderHistory order = mOrderIdMap.get(key);
@@ -75,10 +84,10 @@ public class OrdersDataBaseSingleTon {
     }
 
     /**
-     * Adds an Order or Updates the existing order.
+     * Adds an Order or Updates the existing order based on the orderId.
      *
-     * @param orderId
-     * @param order
+     * @param orderId Every orderId is unique.
+     * @param order   This is the complete order information.
      */
     public void addOrUpdateOrder(String orderId, OrderHistory order) {
         String prevStatusOfOrder = null;
@@ -104,6 +113,10 @@ public class OrdersDataBaseSingleTon {
         }
     }
 
+    /**
+     * Store all orders in SharedPreferences.
+     * Used by Other components before any process is killed.
+     */
     public void storeInSharedPrefs() {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         Gson gson = new Gson();
@@ -113,8 +126,9 @@ public class OrdersDataBaseSingleTon {
     }
 
     /**
-     * Method to generate list of orders to be shown.
+     * Method to generate sorted list of orders to be shown. Sorting is done based on timestamp.
      * This is based on the mapping of TABS and possible status of a particular order.
+     * e.g: Take-Action tab shows Late-Accept & Late-Delivery
      * Check for Utils.getTabtoOrderStatusMapping for the mapping.
      *
      * @param title Name of the tab
@@ -156,19 +170,8 @@ public class OrdersDataBaseSingleTon {
         return groupedOrders;
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
-
-    public HashMap<String, ArrayList<String>> getOrderStatusMap() {
+    public ArrayMap<String, ArrayList<String>> getOrderStatusMap() {
         return mOrderStatusMap;
-    }
-
-    public void setOrderStatusMap(HashMap<String, ArrayList<String>> mOrderStatusMap) {
-        this.mOrderStatusMap = mOrderStatusMap;
     }
 
 }
