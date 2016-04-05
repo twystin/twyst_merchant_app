@@ -87,20 +87,28 @@ public class OrderTrackerRVAdapter extends RecyclerView.Adapter<OrderTrackerRVAd
         holder.tv_orderCost.setText(String.valueOf(order.getOrderCost()));
 
         // User Name
-        if (order.getUser().getFirst_name() != null) {
-            String name = order.getUser().getFirst_name();
-            if (order.getUser().getLast_name() != null)
-                name += " " + order.getUser().getLast_name();
-            holder.tv_username.setText(name);
+        if (order.getUser() != null) {
+            if (order.getUser().getFirst_name() != null) {
+                String name = order.getUser().getFirst_name();
+                if (order.getUser().getLast_name() != null)
+                    name += " " + order.getUser().getLast_name();
+                holder.tv_username.setText(name);
+            } // TODO - why no name in order object?
         }
-        // TODO - why no name in order object?
 
         // User address
+        String s = "";
         if (order.getAddress() != null) {
             Address address = order.getAddress();
-            String s = address.getLine1() + " " + address.getLine2() + ", " + address.getCity();
-            holder.tv_address.setText(s);
-        } // TODO - need to see which address object to use.
+            if (address.getLine1() != null)
+                s += address.getLine1();
+            if (address.getLine2() != null)
+                s += " " + address.getLine2();
+            if (address.getCity() != null)
+                s += ", " + address.getCity();
+
+        }
+        holder.tv_address.setText(s); // TODO - need to see which address object to use.
 
         // Load user image.
         // TODO - Currently image not available in order object. Check where to get it from.
