@@ -7,6 +7,7 @@
     tools:context="com.twsyt.merchant.activities.LoginActivity">
 
     <ImageView
+        android:id="@+id/twyst_logo"
         android:layout_width="match_parent"
         android:layout_height="75dp"
         android:layout_alignParentTop="true"
@@ -46,5 +47,20 @@
         android:textColor="@color/white"
         android:textSize="20dp"
         android:visibility="visible" />
+
+
+    <LinearLayout
+        android:id="@+id/circularProgressBar_ll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/twyst_logo"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:visibility="gone">
+
+        <include
+            android:id="@+id/circularProgressBar"
+            layout="@layout/twyst_progress_hud" />
+    </LinearLayout>
 
 </RelativeLayout>

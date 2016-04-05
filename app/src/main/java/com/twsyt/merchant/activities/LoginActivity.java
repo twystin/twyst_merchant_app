@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.twsyt.merchant.R;
@@ -21,6 +24,7 @@ import com.twsyt.merchant.model.LoginResponse;
 import com.twsyt.merchant.service.HttpService;
 import com.twsyt.merchant.service.WebSocketService;
 
+import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -35,6 +39,9 @@ public class LoginActivity extends AppCompatActivity {
     private EditText et_password;
     private LoginResponse mLoginResp;
     private SharedPreferences sharedPrefs;
+    private LinearLayout circularProgressBar_ll;
+    private CircularProgressBar circularProgressBar;
+    private TextView loginButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,13 +50,14 @@ public class LoginActivity extends AppCompatActivity {
 
         et_userId = (EditText) findViewById(R.id.tv_userId);
         et_password = (EditText) findViewById(R.id.tv_password);
-        TextView loginButton = (TextView) findViewById(R.id.bLogin);
+        loginButton = (TextView) findViewById(R.id.bLogin);
         sharedPrefs = this.getApplicationContext().getSharedPreferences(AppConstants.PREFERENCE_SHARED_PREF_NAME, Context.MODE_PRIVATE);
 
         // Start the service directly if we have logged in once before and skip the login step.
         if (sharedPrefs.getBoolean(AppConstants.LOGGED_IN_ATLEAST_ONCE, false)) {
             Utils.checkAndStartWebSocketService(LoginActivity.this);
             StartMainActivity();
+            Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
         } else {
             if (loginButton != null) {
                 loginButton.setOnClickListener(new View.OnClickListener() {
@@ -63,6 +71,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void performLogin() {
+        loginButton.setEnabled(false);
+
+        circularProgressBar_ll = (LinearLayout) findViewById(R.id.circularProgressBar_ll);
+        circularProgressBar = (CircularProgressBar) findViewById(R.id.circularProgressBar);
+
+        circularProgressBar.setVisibility(View.VISIBLE);
+        circularProgressBar_ll.setVisibility(View.VISIBLE);
+
         if (!TextUtils.isEmpty(et_userId.getText())) {
             userId = et_userId.getText().toString();
         }
@@ -86,13 +102,19 @@ public class LoginActivity extends AppCompatActivity {
                     editor.commit();
                     Utils.checkAndStartWebSocketService(LoginActivity.this);
                     StartMainActivity();
+                    Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(LoginActivity.this, "Login Unsuccessful due to unknown Error", Toast.LENGTH_SHORT).show();
                 }
+                hideProgressHUDInLayout();
             }
 
             @Override
             public void failure(RetrofitError error) {
                 // TODO - Need to improve the UX here. show snackbar or something
                 Log.d(LOG_TAG, "Failed for some reason");
+                Toast.makeText(LoginActivity.this, "Login Unsuccessful", Toast.LENGTH_SHORT).show();
+                hideProgressHUDInLayout();
             }
         });
     }
@@ -100,5 +122,15 @@ public class LoginActivity extends AppCompatActivity {
     private void StartMainActivity() {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(intent);
+        finish();
+    }
+
+    public void hideProgressHUDInLayout() {
+        if (circularProgressBar != null) {
+            circularProgressBar.progressiveStop();
+            circularProgressBar.setVisibility(View.GONE);
+        }
+        circularProgressBar_ll.setVisibility(View.GONE);
+        loginButton.setEnabled(true);
     }
 }
