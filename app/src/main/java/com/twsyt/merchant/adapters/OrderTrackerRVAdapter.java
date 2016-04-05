@@ -16,9 +16,12 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.twsyt.merchant.R;
 import com.twsyt.merchant.Util.AppConstants;
 import com.twsyt.merchant.activities.OrderDetailsActivity;
+import com.twsyt.merchant.model.order.Address;
 import com.twsyt.merchant.model.order.OrderHistory;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class OrderTrackerRVAdapter extends RecyclerView.Adapter<OrderTrackerRVAdapter.MyViewHolder> {
@@ -52,8 +55,13 @@ public class OrderTrackerRVAdapter extends RecyclerView.Adapter<OrderTrackerRVAd
             }
         });
 
+
         // time stamp
-        holder.tv_timeStamp.setText(""); // TODO
+        if (order.getOrderDate() != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a");
+            String formattedDate = dateFormat.format(new Date()).toString();
+            holder.tv_timeStamp.setText(formattedDate);
+        }
 
         // Current status of the order
         holder.tv_orderStatus.setText(order.getOrderStatus());
@@ -65,16 +73,34 @@ public class OrderTrackerRVAdapter extends RecyclerView.Adapter<OrderTrackerRVAd
         holder.tv_outletName.setText(order.getOutletName());
 
         // Mode/Current Status of Payment
-        holder.tv_paymentType.setText(""); // TODO - check if payment will be available in order object.
+
+        if (order.getPaymentInfo() != null) {
+            String paymentMode = "";
+            if (order.getPaymentInfo().is_inapp()) {
+                paymentMode = "PAID ONLINE";
+            } else
+                paymentMode = "TAKE PAYMENT";
+            holder.tv_paymentType.setText(paymentMode);
+        } // TODO - check if payment will be available in order object.
 
         // Order Cost
         holder.tv_orderCost.setText(String.valueOf(order.getOrderCost()));
 
         // User Name
-        holder.tv_username.setText(""); // TODO - why no name in order object?
+        if (order.getUser().getFirst_name() != null) {
+            String name = order.getUser().getFirst_name();
+            if (order.getUser().getLast_name() != null)
+                name += " " + order.getUser().getLast_name();
+            holder.tv_username.setText(name);
+        }
+        // TODO - why no name in order object?
 
         // User address
-        holder.tv_address.setText(""); // TODO - need to see which address object to use.
+        if (order.getAddress() != null) {
+            Address address = order.getAddress();
+            String s = address.getLine1() + " " + address.getLine2() + ", " + address.getCity();
+            holder.tv_address.setText(s);
+        } // TODO - need to see which address object to use.
 
         // Load user image.
         // TODO - Currently image not available in order object. Check where to get it from.

@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.ArrayMap;
+import android.util.Log;
 import android.view.ViewDebug;
 
 import com.google.gson.Gson;
@@ -78,6 +79,7 @@ public class OrdersDataBaseSingleTon {
     private void loadOrders() {
         getFromSharedPrefs();
         if (Utils.isNetworkAvailable(mContext)) {
+            Log.d(OrdersDataBaseSingleTon.class.getSimpleName(), "Network is available, Syncing with server");
             syncWithServer();
         }
 

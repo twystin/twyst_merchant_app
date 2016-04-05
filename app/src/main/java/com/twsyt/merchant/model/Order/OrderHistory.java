@@ -3,6 +3,8 @@ package com.twsyt.merchant.model.order;
 import android.text.TextUtils;
 
 import com.google.gson.annotations.SerializedName;
+import com.twsyt.merchant.model.PaymentInfo;
+import com.twsyt.merchant.model.User;
 import com.twsyt.merchant.model.menu.DeliveryZone;
 import com.twsyt.merchant.model.menu.Items;
 import com.twsyt.merchant.model.menu.OrderAction;
@@ -72,6 +74,28 @@ public class OrderHistory implements Serializable {
 
     @SerializedName("actions")
     private ArrayList<OrderAction> orderActionsList;
+
+    public PaymentInfo getPaymentInfo() {
+        return paymentInfo;
+    }
+
+    public void setPaymentInfo(PaymentInfo paymentInfo) {
+        this.paymentInfo = paymentInfo;
+    }
+
+    @SerializedName("payment_info")
+    private PaymentInfo paymentInfo;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    @SerializedName("user")
+    private User user;
 
     public String getPhone() {
         return phone;
