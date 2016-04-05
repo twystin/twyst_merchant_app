@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.twsyt.merchant.activities.LoginActivity;
 import com.twsyt.merchant.service.WebSocketService;
@@ -41,7 +43,7 @@ public class Utils {
                 return new String[]{"DELIVERED"};
 
             case AppConstants.ORDER_STATUS_OTHERS:
-                return new String[]{"ABANDONED", "REJECTED", "CLOSED"};
+                return new String[]{"ABANDONED", "REJECTED", "CLOSED", "CANCELLED"};
         }
         return null;
     }
@@ -53,21 +55,39 @@ public class Utils {
     }
 
 
-    public static boolean isMyServiceRunning(Class<?> serviceClass, Context context) {
+/*
+    private static boolean isMyServiceRunning() {
+        Log.d("Utils", "Calling isMyServiceRunning from Context: " + context.toString() + "Service : " + serviceClass.getSimpleName());
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {
+                Log.d("Utils", "Calling isMyServiceRunning from Context: " + context.toString() + "Service is running");
                 return true;
             }
         }
+        Log.d("Utils", "Service :  " + serviceClass.getSimpleName() + "from Context: " + context.toString() + "Service is NOT running");
         return false;
     }
+*/
 
-    public static void startMyService(Class<?> serviceClass, Context context) {
-        if (!Utils.isMyServiceRunning(serviceClass, context)) {
+    public static void checkAndStartWebSocketService(Context context) {
+        context = context.getApplicationContext();
+        Log.d("Utils", "Calling checkAndStartWebSocketService from Context: " + context.toString());
+        if (!WebSocketService.isRunning) {
+            Log.d("Utils", "starting the service: " + context.toString());
             Intent intent = new Intent(context, WebSocketService.class);
             context.startService(intent);
         }
     }
 
+    /**
+     * BroadCast the message. Any activity with this LocalBroadCast manager will be notified of newly downloaded data.
+     *
+     * @param resultCode 1: success, 0: failure
+     */
+    public static void callRegisteredReceivers(Context context, int resultCode) {
+        Intent intent = new Intent(AppConstants.INTENT_DOWNLOADED_ORDER);
+        intent.putExtra(AppConstants.NEW_DATA_AVAILABLE, resultCode);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
 }

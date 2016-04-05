@@ -5,7 +5,9 @@ package com.twsyt.merchant.Util;
  */
 public class AppConstants {
 
+
     public static final String HOST = "http://staging.twyst.in";
+    public static final String FAYE_HOST = HOST + "/faye/";
 
     public static final String ORDER_TRACKER_TYPE = "order_tracker_type";
     public static final String PREFERENCE_SHARED_PREF_NAME = "com.twyst.android";
@@ -64,5 +66,5 @@ public class AppConstants {
     public static final String CHANNEL_SUBSCRIPTION = "channel_to_be_subscribed_to";
     public static final String MY_ROLE_IS = "my_role_is";
     public static final String LOGIN_RESPONSE_JSON = "login_response_json";
-    public static final String LOGGED_IN_ATLEAST_ONCE = "login_status" ;
+    public static final String LOGGED_IN_ATLEAST_ONCE = "login_status";
 }

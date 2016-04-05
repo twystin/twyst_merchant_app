@@ -1,5 +1,6 @@
 package com.twsyt.merchant;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
 
@@ -16,10 +17,6 @@ public class TwystApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         HttpService.getInstance().setup(getApplicationContext());
-
     }
-
-
 }

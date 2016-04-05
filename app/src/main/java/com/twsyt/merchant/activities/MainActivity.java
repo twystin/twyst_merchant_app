@@ -1,25 +1,24 @@
 package com.twsyt.merchant.activities;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
 import com.twsyt.merchant.R;
+import com.twsyt.merchant.TwystApplication;
 import com.twsyt.merchant.Util.AppConstants;
+import com.twsyt.merchant.Util.Utils;
 import com.twsyt.merchant.adapters.OrderTrackerFragmentAdapter;
 import com.twsyt.merchant.fragments.OrderTrackerPageFragment;
-import com.twsyt.merchant.receivers.OrderTrackerResultReceiver;
-import com.twsyt.merchant.service.WebSocketService;
 
 import java.util.List;
 
@@ -35,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Generate a broadcast receiver. This will be used to get updates from service. This is registered in
+        // onStart and unregistered in onStop of this Activity.
         mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -43,13 +44,21 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        String channelName = getIntent().getStringExtra(AppConstants.INTENT_EXTRA_CHANNEL_NAME);
-
-        Intent intent = new Intent(this, WebSocketService.class);
-        startService(intent);
-
+        Utils.checkAndStartWebSocketService(MainActivity.this);
         setupToolBar();
         setupFragmentAdapter();
+    }
+
+    public void setupToolBar() {
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+//        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+//        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                onBackPressed();
+//            }
+//        });
     }
 
     @Override
@@ -59,11 +68,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        notifyAllFrags(AppConstants.DOWNLOAD_SUCCESS);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         LocalBroadcastManager.getInstance(MainActivity.this).unregisterReceiver(mReceiver);
     }
 
+    /**
+     * Setup the adpater for all fragments. Since we have a lot of fragments, OrderTrackerFragmentAdapter extends
+     * FragmentStatePagerAdapter.
+     */
     private void setupFragmentAdapter() {
         // Setup the ViewPager
         ViewPager mViewPager = (ViewPager) findViewById(R.id.orderTrackerPager);
@@ -79,30 +103,30 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void setupToolBar() {
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-//        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-//        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                onBackPressed();
-//            }
-//        });
-    }
 
     /**
-     * Overridden method for interface:  Receiver, class: OrderTrackerResultReceiver.
-     * Provides the below given params whenever a new message arrives in service.
+     * Get list of all created fragments and notify their respective adapters.
+     * Also update all the tab names with correct counts.
      *
-     * @param resultCode
+     * @param resultCode result code received from service.
+     *                   1: new Data available.
+     *                   2: TODO - Add more for good UX.
      */
     public void notifyAllFrags(int resultCode) {
         if (resultCode == AppConstants.DOWNLOAD_SUCCESS) {
+            // Tab names update
+            if ((slidingTabs_orderTracker == null)) {
+                return;
+            }
+
             int numTabs = slidingTabs_orderTracker.getTabCount();
             for (int i = 0; i < numTabs; i++) {
+                // Updating all tab names. Need to see if possible to update only required
+                // tab names.
                 slidingTabs_orderTracker.getTabAt(i).setText(mPagerAdapter.getPageTitle(i));
             }
+
+            // Notify adapter in all running fragments.
             List<Fragment> frags = getSupportFragmentManager().getFragments();
             if (frags != null) {
                 for (Fragment f : frags) {

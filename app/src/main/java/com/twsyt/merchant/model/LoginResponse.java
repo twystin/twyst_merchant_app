@@ -11,6 +11,13 @@ public class LoginResponse implements Serializable {
 
     private String _id;
     private int role;
+    private Profile profile;
+
+
+    // This below object is added coz of flaw in our API.
+    @SerializedName("data")
+    private LoginResponse loginResponse;
+
 
     public String getToken() {
         return token;
@@ -29,11 +36,6 @@ public class LoginResponse implements Serializable {
     public void setProfile(Profile profile) {
         this.profile = profile;
     }
-
-    private Profile profile;
-
-    @SerializedName("data")
-    private LoginResponse loginResponse;
 
     public LoginResponse getLoginResponse() {
         return loginResponse;

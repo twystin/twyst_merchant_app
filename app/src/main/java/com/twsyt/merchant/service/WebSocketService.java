@@ -1,22 +1,29 @@
 package com.twsyt.merchant.service;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.saulpower.fayeclient.FayeClient;
 import com.saulpower.fayeclient.FayeClient.FayeListener;
 import com.twsyt.merchant.Util.AppConstants;
 import com.twsyt.merchant.Util.OrdersDataBaseSingleTon;
+import com.twsyt.merchant.Util.Utils;
 import com.twsyt.merchant.model.BaseResponse;
+import com.twsyt.merchant.model.LoginResponse;
 import com.twsyt.merchant.model.order.OrderHistory;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.net.URI;
 
 import retrofit.Callback;
@@ -25,46 +32,87 @@ import retrofit.client.Response;
 
 public class WebSocketService extends IntentService implements FayeListener {
 
-    public final String TAG = this.getClass().getSimpleName();
-    FayeClient mClient;
-    private String token = "HAba02nFxNIrQGreYIv9JUev078YDF2q";
-    private OrderHistory mOrderHistory;
+    public static boolean isRunning = false;
 
     public WebSocketService() {
         super("WebSocketService");
     }
 
+    public final String TAG = this.getClass().getSimpleName();
+
+    FayeClient mClient;
+    // Login Data
+    private int role;
+    private String token;
+    private String channelName;
+
+    private OrderHistory mOrderHistory;
+
+    //    private String token = "HAba02nFxNIrQGreYIv9JUev078YDF2q";
+
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        isRunning = true;
+    }
+
     @Override
     protected void onHandleIntent(Intent intent) {
+        Log.i(TAG, "Starting Web Socket Service");
 
-        Log.i(TAG, "Starting Web Socket");
+        getLoginInfo();
 
 //        try {
 
-//            String baseUrl = Preferences.getString(Preferences.KEY_FAYE_HOST, DebugActivity.PROD_FAYE_HOST);
 //        String baseUrl = "http://twyst.in/faye/";
-        String baseUrl = "http://staging.twyst.in/faye/";
+//        String baseUrl = "http://staging.twyst.in/faye/";
+
+        URI uri = URI.create(String.format("%s", AppConstants.FAYE_HOST));
+        String channel = String.format("/%s", channelName);
 
 //        URI uri = URI.create(String.format("wss://%s:443/events", baseUrl));
-        URI uri = URI.create(String.format("%s", baseUrl));
 //        String channel = String.format("/%s", "56879bf4af76ee153f804dd3");
-        String channelIntent = intent.getStringExtra(AppConstants.INTENT_EXTRA_CHANNEL_NAME);
-
-        String channel = String.format("/%s", "dktwystin");
 //        String channel = String.format("/%s", channelIntent.replace("@", "").replace(".", ""));
-        Log.d(TAG, "URI : " + uri + "Channel : " + channel);
+
+        Log.d(TAG, "URI : " + uri + " \n Channel : " + channel);
 //            String channel = String.format("/%s/**", User.getCurrentUser().getUserId());
 
         JSONObject ext = new JSONObject();
 //            ext.put("authToken", User.getCurrentUser().getAuthorizationToken());
-
 //            mClient = new FayeClient(uri, channel);
         mClient = new FayeClient(new Handler(Looper.getMainLooper()), uri, channel);
         mClient.setFayeListener(this);
         mClient.connectToServer(ext);
 
-
 //        } catch (JSONException ex) {}
+    }
+
+    private void getLoginInfo() {
+        SharedPreferences sp = getSharedPreferences(AppConstants.PREFERENCE_SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        Type type = new TypeToken<LoginResponse>() {
+        }.getType();
+        LoginResponse loginResp = new Gson().fromJson(sp.getString(AppConstants.LOGIN_RESPONSE_JSON, null), type);
+
+        role = loginResp.getRole();
+        token = loginResp.getToken();
+        channelName = "";
+        switch (role) {
+            case AppConstants.ROLE_ADMIN:
+                String email = "";
+                if (loginResp.getProfile() != null) {
+                    email = loginResp.getProfile().getEmail();
+                }
+                channelName = email.replace("@", "").replace(".", "");
+                break;
+
+            case AppConstants.ROLE_MERCHANT:
+                channelName = loginResp.get_id();
+                break;
+
+            default:
+                channelName = "";
+        }
     }
 
     /**
@@ -76,21 +124,9 @@ public class WebSocketService extends IntentService implements FayeListener {
         OrdersDataBaseSingleTon.getInstance(WebSocketService.this).storeInSharedPrefs();
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-    }
-
-    @Override
-    public void onStart(Intent intent, int startId) {
-        super.onStart(intent, startId);
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
-    }
-
+    /**
+     * FayeListener methods.
+     */
     @Override
     public void connectedToServer() {
         Log.i(TAG, "Connected to Server");
@@ -135,7 +171,7 @@ public class WebSocketService extends IntentService implements FayeListener {
                             mOrderHistory = orderHistoryBaseResponse.getData();
                             if (mOrderHistory != null) {
                                 updateOrdersDb(mOrderID);
-                                callReceiver(AppConstants.DOWNLOAD_SUCCESS);
+                                Utils.callRegisteredReceivers(WebSocketService.this, AppConstants.DOWNLOAD_SUCCESS);
                             } else {
                                 Log.d(TAG, "Order fetched is null");
                             }
@@ -144,6 +180,7 @@ public class WebSocketService extends IntentService implements FayeListener {
 
                     @Override
                     public void failure(RetrofitError error) {
+                        // TODO - Need to improve the UX here. show snackbar or something
                     }
                 }
         );
@@ -156,16 +193,6 @@ public class WebSocketService extends IntentService implements FayeListener {
      */
     private void updateOrdersDb(String orderId) {
         OrdersDataBaseSingleTon.getInstance(WebSocketService.this).addOrUpdateOrder(orderId, mOrderHistory);
-    }
-
-    /**
-     * BroadCast the message. Any activity with this LocalBroadCast manager will be notified of new downloaded data.
-     *
-     * @param resultCode 1: success, 0: failure
-     */
-    private void callReceiver(int resultCode) {
-        Intent intent = new Intent(AppConstants.INTENT_DOWNLOADED_ORDER);
-        intent.putExtra(AppConstants.NEW_DATA_AVAILABLE, resultCode);
-        LocalBroadcastManager.getInstance(WebSocketService.this).sendBroadcast(intent);
+        OrdersDataBaseSingleTon.getInstance(WebSocketService.this).storeInSharedPrefs();
     }
 }

@@ -29,10 +29,10 @@ public class LoginActivity extends AppCompatActivity {
 
     private String LOG_TAG = LoginActivity.this.getClass().getSimpleName();
 
-    String userId = "";
-    String password = "";
-    EditText et_userId;
-    EditText et_password;
+    private String userId = "";
+    private String password = "";
+    private EditText et_userId;
+    private EditText et_password;
     private LoginResponse mLoginResp;
     private SharedPreferences sharedPrefs;
 
@@ -46,17 +46,20 @@ public class LoginActivity extends AppCompatActivity {
         TextView loginButton = (TextView) findViewById(R.id.bLogin);
         sharedPrefs = this.getApplicationContext().getSharedPreferences(AppConstants.PREFERENCE_SHARED_PREF_NAME, Context.MODE_PRIVATE);
 
+        // Start the service directly if we have logged in once before and skip the login step.
         if (sharedPrefs.getBoolean(AppConstants.LOGGED_IN_ATLEAST_ONCE, false)) {
-            Utils.startMyService(WebSocketService.class, LoginActivity.this);
+            Utils.checkAndStartWebSocketService(LoginActivity.this);
             StartMainActivity();
-        }
-
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                performLogin();
+        } else {
+            if (loginButton != null) {
+                loginButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        performLogin();
+                    }
+                });
             }
-        });
+        }
     }
 
     private void performLogin() {
@@ -75,38 +78,20 @@ public class LoginActivity extends AppCompatActivity {
             public void success(BaseResponse<LoginResponse> loginResponseBaseResponse, Response response) {
                 if (loginResponseBaseResponse.isResponse()) {
                     mLoginResp = loginResponseBaseResponse.getData().getLoginResponse();
-                    /*int role = mLoginResp.getLoginResponse().getRole();
-                    String channelName = "";
-                    switch (role) {
-                        case AppConstants.ROLE_ADMIN:
-                            String email = "";
-                            if (mLoginResp.getLoginResponse().getProfile() != null) {
-                                email = mLoginResp.getLoginResponse().getProfile().getEmail();
-                            }
-                            channelName = email.replace("@", "").replace(".", "");
-                            break;
-
-                        case AppConstants.ROLE_MERCHANT:
-                            channelName = mLoginResp.getLoginResponse().get_id();
-                            break;
-
-                        default:
-                            channelName = "";
-                    }*/
-
                     SharedPreferences.Editor editor = sharedPrefs.edit();
                     Gson gson = new Gson();
                     String loginResponsJson = gson.toJson(mLoginResp);
                     editor.putString(AppConstants.LOGIN_RESPONSE_JSON, loginResponsJson);
                     editor.putBoolean(AppConstants.LOGGED_IN_ATLEAST_ONCE, true);
                     editor.commit();
-                    Utils.startMyService(WebSocketService.class, LoginActivity.this);
+                    Utils.checkAndStartWebSocketService(LoginActivity.this);
                     StartMainActivity();
                 }
             }
 
             @Override
             public void failure(RetrofitError error) {
+                // TODO - Need to improve the UX here. show snackbar or something
                 Log.d(LOG_TAG, "Failed for some reason");
             }
         });

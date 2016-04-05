@@ -1,5 +1,6 @@
 package com.twsyt.merchant.Util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -9,9 +10,13 @@ import android.view.ViewDebug;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.twsyt.merchant.TwystApplication;
+import com.twsyt.merchant.activities.MainActivity;
 import com.twsyt.merchant.model.BaseResponse;
+import com.twsyt.merchant.model.LoginResponse;
 import com.twsyt.merchant.model.order.OrderHistory;
 import com.twsyt.merchant.service.HttpService;
+import com.twsyt.merchant.service.WebSocketService;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
@@ -29,26 +34,25 @@ import retrofit.client.Response;
 /**
  * Singleton Class for holding data(order information.)
  * This needs to be thread safe as data will be loaded in WebSocketService and read by activities.
- * <p>
+ * <p/>
  * Data is stored in two formats.
  * 1. Map(mOrderIdMap)      - key: orderId,     Val: Order Info object
  * 2. Map(mOrderStatusMap)  - key: orderStatus, Val: orderId
- * <p>
+ * <p/>
  * Before the WebSocketService is destroyed, all the orders present in mOrderIdMap are stored in SharedPreferences for later use.
  * On a new start, data is loaded from Server, if network is available else from SharedPreferences.
  */
 public class OrdersDataBaseSingleTon {
+
     private final static String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 
     private final Context mContext;
 
-    public SharedPreferences getSharedPreferences() {
-        return mSharedPreferences;
-    }
-
+    // TODO - see if it can be made a local variable
     private final SharedPreferences mSharedPreferences;
-    private ArrayMap<String, OrderHistory> mOrderIdMap;
-    private ArrayMap<String, ArrayList<String>> mOrderStatusMap;
+
+    private HashMap<String, OrderHistory> mOrderIdMap;
+    private HashMap<String, ArrayList<String>> mOrderStatusMap;
 
     private static final Object mLock = new Object();
     private static OrdersDataBaseSingleTon mInstance;
@@ -68,28 +72,35 @@ public class OrdersDataBaseSingleTon {
         loadOrders();
     }
 
+    /**
+     *
+     */
     private void loadOrders() {
-        // Load data from server if internet is present else from sharedPrefs.
+        getFromSharedPrefs();
         if (Utils.isNetworkAvailable(mContext)) {
-            String token = mSharedPreferences.getString(AppConstants.LOGIN_TOKEN, "");
-            int role = mSharedPreferences.getInt(AppConstants.MY_ROLE_IS, 0);
-            if (role != 0 && !token.equals("")) {
-                syncWithServer(role, token);
-            }
-        } else {
+            syncWithServer();
         }
 
+    }
+
+    private void getFromSharedPrefs() {
         if (mSharedPreferences.getString(AppConstants.ALL_ORDERS, null) != null) {
-            Type type = new TypeToken<ArrayMap<String, OrderHistory>>() {
+            Type type = new TypeToken<HashMap<String, OrderHistory>>() {
             }.getType();
             mOrderIdMap = new Gson().fromJson(mSharedPreferences.getString(AppConstants.ALL_ORDERS, null), type);
         } else {
-            mOrderIdMap = new ArrayMap<>();
+            mOrderIdMap = new HashMap<>();
         }
         genOrderStatusMap();
     }
 
-    private void syncWithServer(int role, String token) {
+    private void syncWithServer() {
+        Type type = new TypeToken<LoginResponse>() {
+        }.getType();
+        LoginResponse loginResp = new Gson().fromJson(mSharedPreferences.getString(AppConstants.LOGIN_RESPONSE_JSON, null), type);
+        int role = loginResp.getRole();
+        String token = loginResp.getToken();
+
         switch (role) {
             case AppConstants.ROLE_MERCHANT:
                 break;
@@ -98,12 +109,20 @@ public class OrdersDataBaseSingleTon {
                 HttpService.getInstance().getAllOrdersAM(token, new Callback<BaseResponse<ArrayList<OrderHistory>>>() {
                     @Override
                     public void success(BaseResponse<ArrayList<OrderHistory>> arrayListBaseResponse, Response response) {
-
+                        if (arrayListBaseResponse.isResponse()) {
+                            ArrayList<OrderHistory> ordersList = arrayListBaseResponse.getData();
+                            mOrderStatusMap.clear();
+                            mOrderIdMap.clear();
+                            for (OrderHistory order : ordersList) {
+                                addOrUpdateOrder(order.getOrderID(), order);
+                            }
+                            storeInSharedPrefs();
+                            Utils.callRegisteredReceivers(mContext, AppConstants.DOWNLOAD_SUCCESS);
+                        }
                     }
 
                     @Override
                     public void failure(RetrofitError error) {
-
                     }
                 });
                 break;
@@ -112,7 +131,7 @@ public class OrdersDataBaseSingleTon {
 
     private void genOrderStatusMap() {
         if (mOrderStatusMap == null) {
-            mOrderStatusMap = new ArrayMap<>();
+            mOrderStatusMap = new HashMap<>();
         }
         for (String key : mOrderIdMap.keySet()) {
             OrderHistory order = mOrderIdMap.get(key);
@@ -155,12 +174,12 @@ public class OrdersDataBaseSingleTon {
      * Store all orders in SharedPreferences.
      * Used by Other components before any process is killed.
      */
-    public void storeInSharedPrefs() {
+    public boolean storeInSharedPrefs() {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         Gson gson = new Gson();
         String ordersMapJson = gson.toJson(mOrderIdMap);
         editor.putString(AppConstants.ALL_ORDERS, ordersMapJson);
-        editor.commit();
+        return editor.commit();
     }
 
     /**
@@ -208,7 +227,7 @@ public class OrdersDataBaseSingleTon {
         return groupedOrders;
     }
 
-    public ArrayMap<String, ArrayList<String>> getOrderStatusMap() {
+    public HashMap<String, ArrayList<String>> getOrderStatusMap() {
         return mOrderStatusMap;
     }
 
