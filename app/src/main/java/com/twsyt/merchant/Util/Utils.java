@@ -10,7 +10,14 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.twsyt.merchant.activities.LoginActivity;
+import com.twsyt.merchant.model.menu.TimeStamp;
 import com.twsyt.merchant.service.WebSocketService;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Created by tushar on 31/03/16.
@@ -89,5 +96,24 @@ public class Utils {
         Intent intent = new Intent(AppConstants.INTENT_DOWNLOADED_ORDER);
         intent.putExtra(AppConstants.NEW_DATA_AVAILABLE, resultCode);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+    public static TimeStamp getTimeStamp(String orderDate) {
+        String orderDateOld = orderDate;
+        TimeStamp timeStamp = new TimeStamp();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("IST"));
+        DateFormat dateInstance = DateFormat.getDateInstance(DateFormat.MEDIUM);
+        DateFormat timeInstance = DateFormat.getTimeInstance(DateFormat.SHORT);
+
+        try {
+            Date d = sdf.parse(orderDateOld);
+            timeStamp.setDate(dateInstance.format(d));
+            timeStamp.setTime(timeInstance.format(d));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return timeStamp;
     }
 }

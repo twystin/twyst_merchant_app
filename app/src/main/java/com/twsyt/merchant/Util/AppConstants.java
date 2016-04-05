@@ -67,4 +67,6 @@ public class AppConstants {
     public static final String MY_ROLE_IS = "my_role_is";
     public static final String LOGIN_RESPONSE_JSON = "login_response_json";
     public static final String LOGGED_IN_ATLEAST_ONCE = "login_status";
+
+    public static final String INDIAN_RUPEE_SYMBOL = "₹";
 }
