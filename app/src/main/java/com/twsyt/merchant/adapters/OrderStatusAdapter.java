@@ -50,8 +50,8 @@ public class OrderStatusAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemCount() {
-        if (mActionList.size() != 0)
-        return mActionList.size();
+        if (mActionList != null)
+            return mActionList.size();
         else
             return 0;
     }
