@@ -39,7 +39,7 @@ public class AppConstants {
                     ORDER_STATUS_OTHERS
             };
 
-    public static final String ORDER_DETAIL = "order_detail";
+    public static final String INTENT_ORDER_ID = "order_id_from_main_to_detail";
     public static final String INTENT_DOWNLOADED_ORDER = "downloaded_order";
     public static final String NEW_DATA_AVAILABLE = "new_data_available";
     public static final int DOWNLOAD_SUCCESS = 1;

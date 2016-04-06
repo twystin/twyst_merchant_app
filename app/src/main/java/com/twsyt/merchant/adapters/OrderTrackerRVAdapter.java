@@ -2,12 +2,10 @@ package com.twsyt.merchant.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,18 +15,15 @@ import com.twsyt.merchant.R;
 import com.twsyt.merchant.Util.AppConstants;
 import com.twsyt.merchant.Util.Utils;
 import com.twsyt.merchant.activities.OrderDetailsActivity;
-import com.twsyt.merchant.model.menu.TimeStamp;
 import com.twsyt.merchant.model.order.Address;
 import com.twsyt.merchant.model.order.OrderHistory;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 public class OrderTrackerRVAdapter extends RecyclerView.Adapter<OrderTrackerRVAdapter.MyViewHolder> {
 
     // Don't change the below assignment.
+    // This list gets updated from MainActivity via getOrderList() call.
     private ArrayList<OrderHistory> mOrderList = new ArrayList<>();
     Context mContext;
 
@@ -52,7 +47,7 @@ public class OrderTrackerRVAdapter extends RecyclerView.Adapter<OrderTrackerRVAd
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, OrderDetailsActivity.class);
-                intent.putExtra(AppConstants.ORDER_DETAIL, mOrderList.get(position));
+                intent.putExtra(AppConstants.INTENT_ORDER_ID, mOrderList.get(position).getOrderID());
                 v.getContext().startActivity(intent);
             }
         });
@@ -122,10 +117,6 @@ public class OrderTrackerRVAdapter extends RecyclerView.Adapter<OrderTrackerRVAd
     @Override
     public int getItemCount() {
         return mOrderList.size();
-    }
-
-    public void setOrderList(ArrayList<OrderHistory> mOrderList) {
-        this.mOrderList = mOrderList;
     }
 
     public ArrayList<OrderHistory> getOrderList() {

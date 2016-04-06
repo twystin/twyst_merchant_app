@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.twsyt.merchant.R;
 import com.twsyt.merchant.Util.AppConstants;
+import com.twsyt.merchant.Util.OrdersDataBaseSingleTon;
 import com.twsyt.merchant.adapters.OrderDetailsAdapter;
 import com.twsyt.merchant.adapters.OrderStatusAdapter;
 import com.twsyt.merchant.model.menu.Items;
@@ -24,6 +25,9 @@ import java.util.ArrayList;
 
 public class OrderDetailsActivity extends BaseActionActivity {
     BroadcastReceiver mReceiver;
+    ArrayList<OrderAction> actionList = null;
+    OrderStatusAdapter orderStatusAdapter;
+    RecyclerView orderStatusRV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,23 +36,36 @@ public class OrderDetailsActivity extends BaseActionActivity {
         setupToolBar();
 
         Intent intent = getIntent();
-        OrderHistory orderHistory = (OrderHistory) intent.getSerializableExtra(AppConstants.ORDER_DETAIL);
 
-        updateOrderDetails(orderHistory);
+//        final OrderHistory orderHistory = (OrderHistory) intent.getSerializableExtra(AppConstants.INTENT_ORDER_ID);
+        final String orderId = intent.getStringExtra(AppConstants.INTENT_ORDER_ID);
+        OrderHistory order = OrdersDataBaseSingleTon.getInstance(this).getOrderFromOrderId(orderId);
+
+        updateOrderDetails(order);
 
         mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-//                int resultCode = intent.getIntExtra(AppConstants.NEW_DATA_AVAILABLE, 0);
+                int resultCode = intent.getIntExtra(AppConstants.NEW_DATA_AVAILABLE, 0);
+                if (resultCode == AppConstants.DOWNLOAD_SUCCESS) {
+                    OrderHistory order = OrdersDataBaseSingleTon.getInstance(OrderDetailsActivity.this)
+                            .getOrderFromOrderId(orderId);
+                    if (actionList != null) {
+                        actionList.clear();
+                        actionList.addAll(order.getOrderActionsList());
+                        orderStatusAdapter.notifyDataSetChanged();
+                    } else {
+                        actionList = order.getOrderActionsList();
+                        setOrderStatusAdapter();
+                    }
+                }
             }
         };
-
     }
 
     private void updateOrderDetails(OrderHistory orderHistory) {
         ArrayList<Items> itemsList = orderHistory.getItems();
-        ArrayList<OrderAction> actionList = null;
-        if(orderHistory.getOrderActionsList().size()!= 0){
+        if (orderHistory.getOrderActionsList().size() != 0) {
             actionList = orderHistory.getOrderActionsList();
         }
         String paymentMode;
@@ -72,7 +89,7 @@ public class OrderDetailsActivity extends BaseActionActivity {
         outletNameTV.setText(orderHistory.getOutletName());
 
         updateOrderDetails(itemsList);
-        updateOrderStatus(actionList);
+        setupOrderStatusRV();
 
         if (orderHistory.getPaymentInfo().is_inapp()) {
             paymentMode = "COD";
@@ -92,20 +109,20 @@ public class OrderDetailsActivity extends BaseActionActivity {
         RecyclerView orderDetailsRV = (RecyclerView) findViewById(R.id.rv_orderDetails);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(OrderDetailsActivity.this, LinearLayoutManager.VERTICAL, false);
         orderDetailsRV.setLayoutManager(mLayoutManager);
-        OrderDetailsAdapter orderDetailsAdapter = new OrderDetailsAdapter(OrderDetailsActivity.this,itemsList);
+        OrderDetailsAdapter orderDetailsAdapter = new OrderDetailsAdapter(OrderDetailsActivity.this, itemsList);
         orderDetailsRV.setAdapter(orderDetailsAdapter);
 
     }
 
-    private void updateOrderStatus(ArrayList<OrderAction> actionList) {
-        setupOrderStatusRV(actionList);
-    }
-
-    private void setupOrderStatusRV(ArrayList<OrderAction> actionList) {
-        RecyclerView orderStatusRV = (RecyclerView) findViewById(R.id.rv_orderStatus);
+    private void setupOrderStatusRV() {
+        orderStatusRV = (RecyclerView) findViewById(R.id.rv_orderStatus);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(OrderDetailsActivity.this, LinearLayoutManager.VERTICAL, false);
         orderStatusRV.setLayoutManager(mLayoutManager);
-        OrderStatusAdapter orderStatusAdapter = new OrderStatusAdapter(OrderDetailsActivity.this,actionList);
+        setOrderStatusAdapter();
+    }
+
+    private void setOrderStatusAdapter() {
+        orderStatusAdapter = new OrderStatusAdapter(OrderDetailsActivity.this, actionList);
         orderStatusRV.setAdapter(orderStatusAdapter);
     }
 
