@@ -15,7 +15,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.twsyt.merchant.R;
 import com.twsyt.merchant.Util.AppConstants;
+import com.twsyt.merchant.Util.Utils;
 import com.twsyt.merchant.activities.OrderDetailsActivity;
+import com.twsyt.merchant.model.menu.TimeStamp;
 import com.twsyt.merchant.model.order.Address;
 import com.twsyt.merchant.model.order.OrderHistory;
 
@@ -58,9 +60,8 @@ public class OrderTrackerRVAdapter extends RecyclerView.Adapter<OrderTrackerRVAd
 
         // time stamp
         if (order.getOrderDate() != null) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a");
-            String formattedDate = dateFormat.format(new Date()).toString();
-            holder.tv_timeStamp.setText(formattedDate);
+            String time = Utils.getTimeStamp(order.getOrderDate()).getTime();
+            holder.tv_timeStamp.setText(time);
         }
 
         // Current status of the order
