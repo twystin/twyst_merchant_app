@@ -1,5 +1,7 @@
 package com.twsyt.merchant.Util;
 
+import com.twsyt.merchant.model.User;
+
 /**
  * Created by Raman on 3/30/2016.
  */
@@ -42,16 +44,17 @@ public class AppConstants {
     public static final String NEW_DATA_AVAILABLE = "new_data_available";
     public static final int DOWNLOAD_SUCCESS = 1;
     public static final boolean IS_DEVELOPMENT = true;
-
-    // Role Book
-//    1    Root (Twyst Owners and Managers)
-//    2    Admin (Our sales persons or dev guys /account manager)
-//    3    Merchant / customer (The owner of Outlet)
-//    4    Marketing Manager (Manage all Outlets and Users)
-//    5    Outlet Manager (Outlet specific managers)
-//    6    User (The phone app User)
-//    7    OTP users
-//    8    Public (Anonymous Users)
+/*
+    Role Book
+    1    Root (Twyst Owners and Managers)
+    2    Admin (Our sales persons or dev guys /account manager)
+    3    Merchant / customer (The owner of Outlet)
+    4    Marketing Manager (Manage all Outlets and Users)
+    5    Outlet Manager (Outlet specific managers)
+    6    User (The phone app User)
+    7    OTP users
+    8    Public (Anonymous Users)
+*/
     public static final int ROLE_ROOT = 1;
     public static final int ROLE_ADMIN = 2;
     public static final int ROLE_MERCHANT = 3;
@@ -69,4 +72,5 @@ public class AppConstants {
     public static final String LOGGED_IN_ATLEAST_ONCE = "login_status";
 
     public static final String INDIAN_RUPEE_SYMBOL = "₹";
+    public static final String TAB_POSITION = "tab_position_to_show";
 }

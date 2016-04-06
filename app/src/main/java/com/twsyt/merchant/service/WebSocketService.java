@@ -1,11 +1,15 @@
 package com.twsyt.merchant.service;
 
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -13,9 +17,11 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.saulpower.fayeclient.FayeClient;
 import com.saulpower.fayeclient.FayeClient.FayeListener;
+import com.twsyt.merchant.R;
 import com.twsyt.merchant.Util.AppConstants;
 import com.twsyt.merchant.Util.OrdersDataBaseSingleTon;
 import com.twsyt.merchant.Util.Utils;
+import com.twsyt.merchant.activities.MainActivity;
 import com.twsyt.merchant.model.BaseResponse;
 import com.twsyt.merchant.model.LoginResponse;
 import com.twsyt.merchant.model.order.OrderHistory;
@@ -41,8 +47,6 @@ public class WebSocketService extends IntentService implements FayeListener {
     public final String TAG = this.getClass().getSimpleName();
 
     FayeClient mClient;
-    // Login Data
-    private int role;
     private String token;
     private String channelName;
 
@@ -94,7 +98,7 @@ public class WebSocketService extends IntentService implements FayeListener {
         }.getType();
         LoginResponse loginResp = new Gson().fromJson(sp.getString(AppConstants.LOGIN_RESPONSE_JSON, null), type);
 
-        role = loginResp.getRole();
+        int role = loginResp.getRole();
         token = loginResp.getToken();
         channelName = "";
         switch (role) {
@@ -172,6 +176,7 @@ public class WebSocketService extends IntentService implements FayeListener {
                             if (mOrderHistory != null) {
                                 updateOrdersDb(mOrderID);
                                 Utils.callRegisteredReceivers(WebSocketService.this, AppConstants.DOWNLOAD_SUCCESS);
+                                sendNotification(mOrderID);
                             } else {
                                 Log.d(TAG, "Order fetched is null");
                             }
@@ -185,6 +190,42 @@ public class WebSocketService extends IntentService implements FayeListener {
                 }
         );
     }
+
+    private void sendNotification(String orderId) {
+        boolean notifyUser = false;
+
+        OrderHistory order = OrdersDataBaseSingleTon.getInstance(this).getOrderFromOrderId(orderId);
+        String[] getNotified = new String[]{AppConstants.ORDER_STATUS_TAKE_ACTION, AppConstants.ORDER_STATUS_OTHERS};
+        String tab = "";
+        for (String n : getNotified) {
+            for (String key : Utils.getTabtoOrderStatusMapping(n)) {
+                if (order.getOrderStatus().equals(key)) {
+                    notifyUser = true;
+                    tab = n;
+                    break;
+                }
+            }
+        }
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(AppConstants.TAB_POSITION, tab);
+        PendingIntent resultIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        if (notifyUser) {
+            String contentText = "OrderId : " + orderId + " is " + order.getOrderStatus().toLowerCase() + ".";
+            NotificationCompat.Builder notification = new NotificationCompat.Builder(this)
+                    .setContentIntent(resultIntent)
+                    .setSmallIcon(R.drawable.ic_stat_notify)
+                    .setContentTitle("New Notification")
+                    .setContentText(contentText)
+                    .setTicker(contentText)
+                    .setAutoCancel(true);
+
+            NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            // Builds the notification and issues it.
+            mNotifyMgr.notify(orderId, 1, notification.build());
+        }
+    }
+
 
     /**
      * Make changes to the SingleTon Orders DB object as per the orderId.

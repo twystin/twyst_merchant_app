@@ -233,4 +233,11 @@ public class OrdersDataBaseSingleTon {
         return mOrderStatusMap;
     }
 
+    public OrderHistory getOrderFromOrderId(String orderId) {
+        if (mOrderIdMap != null)
+            if (mOrderIdMap.get(orderId) != null)
+                return mOrderIdMap.get(orderId);
+        return null;
+    }
+
 }

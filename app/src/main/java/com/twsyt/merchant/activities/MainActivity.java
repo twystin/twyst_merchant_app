@@ -1,6 +1,5 @@
 package com.twsyt.merchant.activities;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.twsyt.merchant.R;
-import com.twsyt.merchant.TwystApplication;
 import com.twsyt.merchant.Util.AppConstants;
 import com.twsyt.merchant.Util.Utils;
 import com.twsyt.merchant.adapters.OrderTrackerFragmentAdapter;
@@ -23,11 +21,12 @@ import com.twsyt.merchant.fragments.OrderTrackerPageFragment;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActionActivity {
 
     TabLayout slidingTabs_orderTracker;
     OrderTrackerFragmentAdapter mPagerAdapter;
     BroadcastReceiver mReceiver;
+    ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,18 +46,23 @@ public class MainActivity extends AppCompatActivity {
         Utils.checkAndStartWebSocketService(MainActivity.this);
         setupToolBar();
         setupFragmentAdapter();
+        // Adding this processing after setupFragmentAdapter makes sure ViewPager is available.
+        processExtraData();
     }
 
-    public void setupToolBar() {
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-//        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-//        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                onBackPressed();
-//            }
-//        });
+    private void processExtraData() {
+        int tabPos = 0;
+        String tabFromIntent = getIntent().getStringExtra(AppConstants.TAB_POSITION);
+        if (tabFromIntent != null) {
+            String tabTitleToShow = getIntent().getStringExtra(AppConstants.TAB_POSITION);
+            for (int i = 0; i < AppConstants.ORDER_TRACK_TABS_LIST.length; i++) {
+                if (tabTitleToShow.equals(AppConstants.ORDER_TRACK_TABS_LIST[i])) {
+                    tabPos = i;
+                    break;
+                }
+            }
+        }
+        mViewPager.setCurrentItem(tabPos, false);
     }
 
     @Override
@@ -79,6 +83,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        processExtraData();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         LocalBroadcastManager.getInstance(MainActivity.this).unregisterReceiver(mReceiver);
@@ -90,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void setupFragmentAdapter() {
         // Setup the ViewPager
-        ViewPager mViewPager = (ViewPager) findViewById(R.id.orderTrackerPager);
+        mViewPager = (ViewPager) findViewById(R.id.orderTrackerPager);
         mPagerAdapter = new OrderTrackerFragmentAdapter(MainActivity.this, getSupportFragmentManager());
         if (mViewPager != null) {
             mViewPager.setAdapter(mPagerAdapter);

@@ -1,6 +1,7 @@
 package com.twsyt.merchant.Util;
 
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.inputmethod.InputMethodManager;
 
 import com.twsyt.merchant.activities.LoginActivity;
 import com.twsyt.merchant.model.menu.TimeStamp;
@@ -116,4 +118,13 @@ public class Utils {
         }
         return timeStamp;
     }
+
+    public static void hideKeyboard(Activity activity) {
+        if (activity != null && activity.getWindow() != null && activity.getWindow().getDecorView() != null) {
+            InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), 0);
+        }
+    }
+
+
 }
