@@ -22,6 +22,7 @@ import com.twsyt.merchant.Util.AppConstants;
 import com.twsyt.merchant.Util.OrdersDataBaseSingleTon;
 import com.twsyt.merchant.Util.Utils;
 import com.twsyt.merchant.activities.MainActivity;
+import com.twsyt.merchant.activities.OrderDetailsActivity;
 import com.twsyt.merchant.model.BaseResponse;
 import com.twsyt.merchant.model.LoginResponse;
 import com.twsyt.merchant.model.order.OrderHistory;
@@ -206,8 +207,10 @@ public class WebSocketService extends IntentService implements FayeListener {
                 }
             }
         }
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra(AppConstants.TAB_POSITION, tab);
+
+        Intent intent = new Intent(this, OrderDetailsActivity.class);
+        intent.putExtra(AppConstants.INTENT_ORDER_ID, orderId);
+//        intent.putExtra(AppConstants.TAB_POSITION, tab);
         PendingIntent resultIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         if (notifyUser) {

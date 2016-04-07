@@ -24,49 +24,51 @@ import java.util.ArrayList;
 
 
 public class OrderDetailsActivity extends BaseActionActivity {
-    BroadcastReceiver mReceiver;
-    ArrayList<OrderAction> actionList = null;
+
+    ArrayList<OrderAction> actionList = new ArrayList<>();
+    String orderId;
     OrderStatusAdapter orderStatusAdapter;
     RecyclerView orderStatusRV;
+
+    BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int resultCode = intent.getIntExtra(AppConstants.NEW_DATA_AVAILABLE, 0);
+            if (resultCode == AppConstants.DOWNLOAD_SUCCESS) {
+                OrderHistory order = OrdersDataBaseSingleTon.getInstance(OrderDetailsActivity.this)
+                        .getOrderFromOrderId(orderId);
+                actionList.clear();
+                actionList.addAll(order.getOrderActionsList());
+                orderStatusAdapter.notifyDataSetChanged();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_details);
         setupToolBar();
+        processExtraData();
+    }
 
-        Intent intent = getIntent();
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        processExtraData();
+    }
 
-//        final OrderHistory orderHistory = (OrderHistory) intent.getSerializableExtra(AppConstants.INTENT_ORDER_ID);
-        final String orderId = intent.getStringExtra(AppConstants.INTENT_ORDER_ID);
+    private void processExtraData() {
+        orderId = getIntent().getStringExtra(AppConstants.INTENT_ORDER_ID);
         OrderHistory order = OrdersDataBaseSingleTon.getInstance(this).getOrderFromOrderId(orderId);
-
         updateOrderDetails(order);
-
-        mReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                int resultCode = intent.getIntExtra(AppConstants.NEW_DATA_AVAILABLE, 0);
-                if (resultCode == AppConstants.DOWNLOAD_SUCCESS) {
-                    OrderHistory order = OrdersDataBaseSingleTon.getInstance(OrderDetailsActivity.this)
-                            .getOrderFromOrderId(orderId);
-                    if (actionList != null) {
-                        actionList.clear();
-                        actionList.addAll(order.getOrderActionsList());
-                        orderStatusAdapter.notifyDataSetChanged();
-                    } else {
-                        actionList = order.getOrderActionsList();
-                        setOrderStatusAdapter();
-                    }
-                }
-            }
-        };
     }
 
     private void updateOrderDetails(OrderHistory orderHistory) {
         ArrayList<Items> itemsList = orderHistory.getItems();
         if (orderHistory.getOrderActionsList().size() != 0) {
-            actionList = orderHistory.getOrderActionsList();
+            actionList.addAll(orderHistory.getOrderActionsList());
         }
         String paymentMode;
 
@@ -78,15 +80,23 @@ public class OrderDetailsActivity extends BaseActionActivity {
             TextView userNameTV = (TextView) findViewById(R.id.tv_user_name);
             TextView userAddressTV = (TextView) findViewById(R.id.tv_user_address);
 
-            userNameTV.setText(userName);
-            userAddressTV.setText(address);
+            if (userNameTV != null) {
+                userNameTV.setText(userName);
+            }
+            if (userAddressTV != null) {
+                userAddressTV.setText(address);
+            }
         }
 
         TextView orderCostTV = (TextView) findViewById(R.id.tv_order_amount);
-        orderCostTV.setText(AppConstants.INDIAN_RUPEE_SYMBOL + " " + Double.toString(orderHistory.getOrderCost()));
+        if (orderCostTV != null) {
+            orderCostTV.setText(AppConstants.INDIAN_RUPEE_SYMBOL + " " + Double.toString(orderHistory.getOrderCost()));
+        }
 
         TextView outletNameTV = (TextView) findViewById(R.id.tv_outlet_name);
-        outletNameTV.setText(orderHistory.getOutletName());
+        if (outletNameTV != null) {
+            outletNameTV.setText(orderHistory.getOutletName());
+        }
 
         updateOrderDetails(itemsList);
         setupOrderStatusRV();
@@ -98,7 +108,9 @@ public class OrderDetailsActivity extends BaseActionActivity {
         }
 
         TextView paymentTV = (TextView) findViewById(R.id.tv_payement_mode);
-        paymentTV.setText(paymentMode);
+        if (paymentTV != null) {
+            paymentTV.setText(paymentMode);
+        }
     }
 
     private void updateOrderDetails(ArrayList<Items> itemsList) {
@@ -108,9 +120,13 @@ public class OrderDetailsActivity extends BaseActionActivity {
     private void setupOrderDetailsRV(ArrayList<Items> itemsList) {
         RecyclerView orderDetailsRV = (RecyclerView) findViewById(R.id.rv_orderDetails);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(OrderDetailsActivity.this, LinearLayoutManager.VERTICAL, false);
-        orderDetailsRV.setLayoutManager(mLayoutManager);
+        if (orderDetailsRV != null) {
+            orderDetailsRV.setLayoutManager(mLayoutManager);
+        }
         OrderDetailsAdapter orderDetailsAdapter = new OrderDetailsAdapter(OrderDetailsActivity.this, itemsList);
-        orderDetailsRV.setAdapter(orderDetailsAdapter);
+        if (orderDetailsRV != null) {
+            orderDetailsRV.setAdapter(orderDetailsAdapter);
+        }
 
     }
 
@@ -118,10 +134,6 @@ public class OrderDetailsActivity extends BaseActionActivity {
         orderStatusRV = (RecyclerView) findViewById(R.id.rv_orderStatus);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(OrderDetailsActivity.this, LinearLayoutManager.VERTICAL, false);
         orderStatusRV.setLayoutManager(mLayoutManager);
-        setOrderStatusAdapter();
-    }
-
-    private void setOrderStatusAdapter() {
         orderStatusAdapter = new OrderStatusAdapter(OrderDetailsActivity.this, actionList);
         orderStatusRV.setAdapter(orderStatusAdapter);
     }
