@@ -1,14 +1,23 @@
 package com.twsyt.merchant.activities;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.twsyt.merchant.R;
 import com.twsyt.merchant.Util.AppConstants;
@@ -23,12 +32,17 @@ import com.twsyt.merchant.model.order.OrderHistory;
 import java.util.ArrayList;
 
 
-public class OrderDetailsActivity extends BaseActionActivity {
+public class OrderDetailsActivity extends BaseActionActivity implements ActivityCompat.OnRequestPermissionsResultCallback{
 
     ArrayList<OrderAction> actionList = new ArrayList<>();
     String orderId;
     OrderStatusAdapter orderStatusAdapter;
     RecyclerView orderStatusRV;
+    public static final int REQUEST_CALL = 1;
+    public static final int USER = 0;
+    public static final int OUTLET = 1;
+    String userPhone;
+    String outletPhone;
 
     BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -70,12 +84,16 @@ public class OrderDetailsActivity extends BaseActionActivity {
         if (orderHistory.getOrderActionsList().size() != 0) {
             actionList.addAll(orderHistory.getOrderActionsList());
         }
-        String paymentMode;
+
+        LinearLayout callOutletLL = (LinearLayout) findViewById(R.id.ll_call_outlet);
+        LinearLayout callUserLL = (LinearLayout) findViewById(R.id.ll_call_user);
 
         if (orderHistory.getUser() != null) {
             Address userAddress = orderHistory.getAddress();
             String address = userAddress.getLine1() + " " + userAddress.getLine2() + " " + userAddress.getCity();
             String userName = orderHistory.getUser().getFirst_name() + " " + orderHistory.getUser().getLast_name();
+            userPhone = orderHistory.getUser().getPhone_number();
+            outletPhone = orderHistory.getPhone();
 
             TextView userNameTV = (TextView) findViewById(R.id.tv_user_name);
             TextView userAddressTV = (TextView) findViewById(R.id.tv_user_address);
@@ -85,6 +103,24 @@ public class OrderDetailsActivity extends BaseActionActivity {
             }
             if (userAddressTV != null) {
                 userAddressTV.setText(address);
+            }
+
+            if (callUserLL != null) {
+                callUserLL.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showDialogCall(userPhone, USER);
+                    }
+                });
+            }
+
+            if (callOutletLL != null) {
+                callOutletLL.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showDialogCall(outletPhone, OUTLET);
+                    }
+                });
             }
         }
 
@@ -101,10 +137,12 @@ public class OrderDetailsActivity extends BaseActionActivity {
         updateOrderDetails(itemsList);
         setupOrderStatusRV();
 
+
+        String paymentMode;
         if (orderHistory.getPaymentInfo().is_inapp()) {
-            paymentMode = "COD";
-        } else {
             paymentMode = "Paid Online";
+        } else {
+            paymentMode = "COD";
         }
 
         TextView paymentTV = (TextView) findViewById(R.id.tv_payement_mode);
@@ -148,6 +186,71 @@ public class OrderDetailsActivity extends BaseActionActivity {
     protected void onStop() {
         super.onStop();
         LocalBroadcastManager.getInstance(OrderDetailsActivity.this).unregisterReceiver(mReceiver);
+    }
+
+    private void showDialogCall(final String phone_number, int FLAG) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(OrderDetailsActivity.this);
+        final View dialogView = LayoutInflater.from(OrderDetailsActivity.this).inflate(R.layout.dialog_call, null);
+        TextView tv = (TextView) dialogView.findViewById(R.id.tvTitle);
+        switch (FLAG) {
+            case USER:
+                tv.setText("Call the User?");
+                break;
+            case OUTLET:
+                tv.setText("Call the Outlet?");
+        }
+
+        builder.setView(dialogView);
+        final AlertDialog dialog = builder.create();
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.show();
+
+        dialogView.findViewById(R.id.fCancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialogView.findViewById(R.id.fOK).setOnClickListener(new View.OnClickListener() {
+                                                                 @Override
+                                                                 public void onClick(View v) {
+                                                                     if (ActivityCompat.checkSelfPermission(OrderDetailsActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                                                                         ActivityCompat.requestPermissions(OrderDetailsActivity.this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL);
+                                                                     }
+                                                                     Intent call = new Intent(Intent.ACTION_CALL);
+                                                                     call.setData(Uri.parse("tel:" + phone_number));
+                                                                     startActivity(call);
+                                                                     dialog.dismiss();
+                                                                 }
+                                                             }
+        );
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CALL: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Toast.makeText(OrderDetailsActivity.this, "Call Permission granted", Toast.LENGTH_SHORT).show();
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                } else {
+                    Toast.makeText(OrderDetailsActivity.this, "Call Permission Denied, Can not make the call", Toast.LENGTH_SHORT).show();
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 
 }
