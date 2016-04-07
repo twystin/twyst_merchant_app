@@ -69,28 +69,23 @@ public class WebSocketService extends IntentService implements FayeListener {
         getLoginInfo();
 
 //        try {
-
 //        String baseUrl = "http://twyst.in/faye/";
 //        String baseUrl = "http://staging.twyst.in/faye/";
-
-        URI uri = URI.create(String.format("%s", AppConstants.FAYE_HOST));
-        String channel = String.format("/%s", channelName);
-
 //        URI uri = URI.create(String.format("wss://%s:443/events", baseUrl));
 //        String channel = String.format("/%s", "56879bf4af76ee153f804dd3");
 //        String channel = String.format("/%s", channelIntent.replace("@", "").replace(".", ""));
-
-        Log.d(TAG, "URI : " + uri + " \n Channel : " + channel);
 //            String channel = String.format("/%s/**", User.getCurrentUser().getUserId());
-
-        JSONObject ext = new JSONObject();
 //            ext.put("authToken", User.getCurrentUser().getAuthorizationToken());
 //            mClient = new FayeClient(uri, channel);
+//        } catch (JSONException ex) {}
+
+        URI uri = URI.create(String.format("%s", AppConstants.FAYE_HOST));
+        String channel = String.format("/%s", channelName);
+        Log.d(TAG, "URI : " + uri + " \n Channel : " + channel);
+        JSONObject ext = new JSONObject();
         mClient = new FayeClient(new Handler(Looper.getMainLooper()), uri, channel);
         mClient.setFayeListener(this);
         mClient.connectToServer(ext);
-
-//        } catch (JSONException ex) {}
     }
 
     private void getLoginInfo() {
@@ -195,19 +190,15 @@ public class WebSocketService extends IntentService implements FayeListener {
         boolean notifyUser = false;
 
         OrderHistory order = OrdersDataBaseSingleTon.getInstance(this).getOrderFromOrderId(orderId);
-        String[] getNotified = new String[]{AppConstants.ORDER_STATUS_TAKE_ACTION, AppConstants.ORDER_STATUS_OTHERS};
-        for (String n : getNotified) {
-            for (String key : Utils.getTabtoOrderStatusMapping(n)) {
-                if (order.getOrderStatus().equals(key)) {
-                    notifyUser = true;
-                    break;
-                }
+        for (String s : AppConstants.GET_NOTIFIED_FOR_STATUSES) {
+            if (order.getOrderStatus().equals(s)) {
+                notifyUser = true;
+                break;
             }
         }
 
         Intent intent = new Intent(this, OrderDetailsActivity.class);
         intent.putExtra(AppConstants.INTENT_ORDER_ID, orderId);
-//        intent.putExtra(AppConstants.TAB_POSITION, tab);
         PendingIntent resultIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         if (notifyUser) {

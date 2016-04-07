@@ -28,31 +28,34 @@ public class Utils {
     public static String[] getTabtoOrderStatusMapping(String tab) {
         switch (tab) {
             case AppConstants.ORDER_STATUS_TAKE_ACTION:
-                return new String[]{"LATE_ACCEPT, LATE_DELIVERY"};
+                return new String[]{AppConstants.ORDER_LATE_ACCEPT, AppConstants.ORDER_LATE_DELIVERY};
 
             case AppConstants.ORDER_STATUS_PENDING:
-                return new String[]{"PENDING"};
+                return new String[]{AppConstants.ORDER_PENDING};
 
             case AppConstants.ORDER_STATUS_LATE_ACCEPT:
-                return new String[]{"LATE_ACCEPT"};
+                return new String[]{AppConstants.ORDER_LATE_ACCEPT};
 
             case AppConstants.ORDER_STATUS_ACCEPTED:
-                return new String[]{"ACCEPTED"};
+                return new String[]{AppConstants.ORDER_ACCEPTED};
 
             case AppConstants.ORDER_STATUS_DISPATCHED:
-                return new String[]{"DISPATCHED"};
+                return new String[]{AppConstants.ORDER_DISPATCHED};
 
             case AppConstants.ORDER_STATUS_ASSUMED_DELIVERED:
-                return new String[]{"ASSUMED_DELIVERED"};
+                return new String[]{AppConstants.ORDER_ASSUMED_DELIVERED};
 
             case AppConstants.ORDER_STATUS_LATE_DELIVERY:
-                return new String[]{"LATE_DELIVERY"};
+                return new String[]{AppConstants.ORDER_LATE_DELIVERY};
 
             case AppConstants.ORDER_STATUS_DELIVERED:
-                return new String[]{"DELIVERED"};
+                return new String[]{AppConstants.ORDER_DELIVERED};
 
             case AppConstants.ORDER_STATUS_OTHERS:
-                return new String[]{"ABANDONED", "REJECTED", "CLOSED", "CANCELLED"};
+                return new String[]{AppConstants.ORDER_ABANDONED,
+                        AppConstants.ORDER_REJECTED,
+                        AppConstants.ORDER_CLOSED,
+                        AppConstants.ORDER_CANCELLED};
         }
         return null;
     }
@@ -121,7 +124,7 @@ public class Utils {
 
     public static void hideKeyboard(Activity activity) {
         if (activity != null && activity.getWindow() != null && activity.getWindow().getDecorView() != null) {
-            InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), 0);
         }
     }
