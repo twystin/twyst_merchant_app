@@ -135,7 +135,6 @@ public class WebSocketService extends IntentService implements FayeListener {
     @Override
     public void connectedToServer() {
         Log.i(TAG, "Connected to Server");
-        mClient.subscribe();
     }
 
     @Override
@@ -197,12 +196,10 @@ public class WebSocketService extends IntentService implements FayeListener {
 
         OrderHistory order = OrdersDataBaseSingleTon.getInstance(this).getOrderFromOrderId(orderId);
         String[] getNotified = new String[]{AppConstants.ORDER_STATUS_TAKE_ACTION, AppConstants.ORDER_STATUS_OTHERS};
-        String tab = "";
         for (String n : getNotified) {
             for (String key : Utils.getTabtoOrderStatusMapping(n)) {
                 if (order.getOrderStatus().equals(key)) {
                     notifyUser = true;
-                    tab = n;
                     break;
                 }
             }
