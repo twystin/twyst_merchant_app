@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 
+import com.bumptech.glide.util.Util;
 import com.twsyt.merchant.R;
 import com.twsyt.merchant.Util.AppConstants;
 import com.twsyt.merchant.Util.OrdersDataBaseSingleTon;
@@ -45,13 +46,19 @@ public class MainActivity extends BaseActionActivity {
                 notifyAllFrags(resultCode);
             }
         };
-
+        isNetworkAvailable();
         Utils.checkAndStartWebSocketService(MainActivity.this);
         setupToolBar();
         setupSwipeRefresh();
         setupFragmentAdapter();
         // Adding this processing after setupFragmentAdapter makes sure ViewPager is available.
         processExtraData();
+    }
+
+    private void isNetworkAvailable() {
+        if (!Utils.isNetworkAvailable(MainActivity.this)) {
+            buildAndShowSnackbarWithMessage(getResources().getString(R.string.no_internet_conn));
+        }
     }
 
     @Override
@@ -83,6 +90,7 @@ public class MainActivity extends BaseActionActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        isNetworkAvailable();
         notifyAllFrags(AppConstants.DOWNLOAD_SUCCESS);
     }
 
@@ -145,6 +153,7 @@ public class MainActivity extends BaseActionActivity {
                 // tab names.
                 slidingTabs_orderTracker.getTabAt(i).setText(mPagerAdapter.getPageTitle(i));
             }
+
 
             // Notify adapter in all running fragments.
             List<Fragment> frags = getSupportFragmentManager().getFragments();

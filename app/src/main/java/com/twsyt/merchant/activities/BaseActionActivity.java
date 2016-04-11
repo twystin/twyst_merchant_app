@@ -14,8 +14,6 @@ import com.twsyt.merchant.R;
 
 import retrofit.RetrofitError;
 
-//import fr.castorflex.android.circularprogressbar.CircularProgressBar;
-
 /**
  * Created by tushar on 16/02/16.
  */
@@ -36,8 +34,8 @@ public abstract class BaseActionActivity extends AppCompatActivity {
         }
     }
 
-    protected SwipeRefreshLayout mSwipeRefreshLayout;
-    protected boolean mSwRefreshing;
+    public SwipeRefreshLayout mSwipeRefreshLayout;
+    public boolean mSwRefreshing;
 
     protected void setupSwipeRefresh() {
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
@@ -98,9 +96,9 @@ public abstract class BaseActionActivity extends AppCompatActivity {
 
     public void handleRetrofitError(RetrofitError error) {
         if (error.getKind() == RetrofitError.Kind.NETWORK) {
-            buildAndShowSnackbarWithMessage("No internet connection.");
+            buildAndShowSnackbarWithMessage(getResources().getString(R.string.no_internet_conn));
         } else {
-            buildAndShowSnackbarWithMessage("An unexpected error has occurred.");
+            buildAndShowSnackbarWithMessage(getResources().getString(R.string.unexpected_error));
         }
 //        Log.e(getTagName(), "failure", error);
     }

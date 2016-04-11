@@ -1,20 +1,24 @@
 package com.twsyt.merchant.fragments;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 
 import com.twsyt.merchant.R;
 import com.twsyt.merchant.Util.AppConstants;
 import com.twsyt.merchant.Util.OrdersDataBaseSingleTon;
 import com.twsyt.merchant.Util.Utils;
+import com.twsyt.merchant.activities.MainActivity;
 import com.twsyt.merchant.adapters.OrderTrackerRVAdapter;
 import com.twsyt.merchant.model.order.OrderHistory;
 
@@ -31,6 +35,7 @@ import java.util.HashMap;
  */
 public class OrderTrackerPageFragment extends Fragment {
 
+    SwipeRefreshLayout mSwipeRefreshLayout;
     private final String LOG_TAG = OrderTrackerPageFragment.this.getClass().getSimpleName();
     private int mPosition;
     private OrderTrackerRVAdapter orderTrackerRVAdapter;
@@ -45,6 +50,18 @@ public class OrderTrackerPageFragment extends Fragment {
         args.putInt(AppConstants.ORDER_TRACKER_TYPE, position);
         myFragment.setArguments(args);
         return myFragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mSwipeRefreshLayout = ((MainActivity) context).mSwipeRefreshLayout;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mSwipeRefreshLayout = null;
     }
 
     @Override
@@ -71,11 +88,34 @@ public class OrderTrackerPageFragment extends Fragment {
         RecyclerView rv = (RecyclerView) view.findViewById(R.id.orderTrackerRecyclerView);
         rv.setHasFixedSize(true);
 
-        LinearLayoutManager llm = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        final LinearLayoutManager llm = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         rv.setLayoutManager(llm);
         orderTrackerRVAdapter = new OrderTrackerRVAdapter(getContext());
         updateList();
         rv.setAdapter(orderTrackerRVAdapter);
+
+        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (mSwipeRefreshLayout != null) {
+                    // Two possible solutions.. Use either of them
+
+                    // Solution 1.
+                    mSwipeRefreshLayout.setEnabled(llm.findFirstCompletelyVisibleItemPosition() == 0);
+
+                    // Solution 2.
+//                    int topRowVerticalPosition =
+//                            (recyclerView == null || recyclerView.getChildCount() == 0) ? 0 : recyclerView.getChildAt(0).getTop();
+//                    mSwipeRefreshLayout.setEnabled(topRowVerticalPosition >= 0);
+                }
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
+
     }
 
     public void updateList() {
