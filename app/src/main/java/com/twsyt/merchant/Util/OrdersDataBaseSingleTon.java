@@ -96,7 +96,7 @@ public class OrdersDataBaseSingleTon {
         genOrderStatusMap();
     }
 
-    private void syncWithServer() {
+    public void syncWithServer() {
         Type type = new TypeToken<LoginResponse>() {
         }.getType();
         LoginResponse loginResp = new Gson().fromJson(mSharedPreferences.getString(AppConstants.LOGIN_RESPONSE_JSON, null), type);

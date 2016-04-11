@@ -5,16 +5,22 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.content.SharedPreferencesCompat;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.twsyt.merchant.activities.LoginActivity;
+import com.twsyt.merchant.model.LoginResponse;
 import com.twsyt.merchant.model.menu.TimeStamp;
 import com.twsyt.merchant.service.WebSocketService;
 
+import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -129,5 +135,11 @@ public class Utils {
         }
     }
 
-
+    public static String getUserToken(Context context) {
+        Type type = new TypeToken<LoginResponse>() {
+        }.getType();
+        SharedPreferences sharedPreferences = context.getSharedPreferences(AppConstants.PREFERENCE_SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        LoginResponse loginResp = new Gson().fromJson(sharedPreferences.getString(AppConstants.LOGIN_RESPONSE_JSON, null), type);
+        return loginResp.getToken();
+    }
 }

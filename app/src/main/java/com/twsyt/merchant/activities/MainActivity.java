@@ -9,11 +9,10 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 
 import com.twsyt.merchant.R;
 import com.twsyt.merchant.Util.AppConstants;
+import com.twsyt.merchant.Util.OrdersDataBaseSingleTon;
 import com.twsyt.merchant.Util.Utils;
 import com.twsyt.merchant.adapters.OrderTrackerFragmentAdapter;
 import com.twsyt.merchant.fragments.OrderTrackerPageFragment;
@@ -22,7 +21,6 @@ import java.util.List;
 
 
 public class MainActivity extends BaseActionActivity {
-
     TabLayout slidingTabs_orderTracker;
     OrderTrackerFragmentAdapter mPagerAdapter;
     BroadcastReceiver mReceiver;
@@ -39,15 +37,26 @@ public class MainActivity extends BaseActionActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 int resultCode = intent.getIntExtra(AppConstants.NEW_DATA_AVAILABLE, 0);
+                if (mSwRefreshing) {
+                    mSwRefreshing = false;
+                    mSwipeRefreshLayout.setRefreshing(false);
+                    mSwipeRefreshLayout.setEnabled(true);
+                }
                 notifyAllFrags(resultCode);
             }
         };
 
         Utils.checkAndStartWebSocketService(MainActivity.this);
         setupToolBar();
+        setupSwipeRefresh();
         setupFragmentAdapter();
         // Adding this processing after setupFragmentAdapter makes sure ViewPager is available.
         processExtraData();
+    }
+
+    @Override
+    protected void swipeRefresh() {
+        OrdersDataBaseSingleTon.getInstance(MainActivity.this).syncWithServer();
     }
 
     private void processExtraData() {

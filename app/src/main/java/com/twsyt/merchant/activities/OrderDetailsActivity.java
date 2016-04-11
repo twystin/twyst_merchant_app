@@ -22,18 +22,24 @@ import android.widget.Toast;
 import com.twsyt.merchant.R;
 import com.twsyt.merchant.Util.AppConstants;
 import com.twsyt.merchant.Util.OrdersDataBaseSingleTon;
+import com.twsyt.merchant.Util.Utils;
 import com.twsyt.merchant.adapters.OrderDetailsAdapter;
 import com.twsyt.merchant.adapters.OrderStatusAdapter;
+import com.twsyt.merchant.model.BaseResponse;
 import com.twsyt.merchant.model.menu.Items;
 import com.twsyt.merchant.model.menu.OrderAction;
 import com.twsyt.merchant.model.order.Address;
 import com.twsyt.merchant.model.order.OrderHistory;
+import com.twsyt.merchant.service.HttpService;
 
 import java.util.ArrayList;
 
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
-public class OrderDetailsActivity extends BaseActionActivity implements ActivityCompat.OnRequestPermissionsResultCallback{
 
+public class OrderDetailsActivity extends BaseActionActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
     ArrayList<OrderAction> actionList = new ArrayList<>();
     String orderId;
     OrderStatusAdapter orderStatusAdapter;
@@ -63,7 +69,47 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_details);
         setupToolBar();
+        setupSwipeRefresh();
         processExtraData();
+    }
+
+    @Override
+    protected void swipeRefresh() {
+        if (orderId != null) {
+            HttpService.getInstance().getOrderDetail(orderId, Utils.getUserToken(this), new Callback<BaseResponse<OrderHistory>>() {
+                        @Override
+                        public void success(BaseResponse<OrderHistory> orderHistoryBaseResponse, Response response) {
+                            if (orderHistoryBaseResponse.isResponse()) {
+                                OrderHistory order = orderHistoryBaseResponse.getData();
+                                OrdersDataBaseSingleTon.getInstance(OrderDetailsActivity.this).addOrUpdateOrder(orderId, order);
+                                OrdersDataBaseSingleTon.getInstance(OrderDetailsActivity.this).storeInSharedPrefs();
+                                actionList.clear();
+                                actionList.addAll(order.getOrderActionsList());
+                                orderStatusAdapter.notifyDataSetChanged();
+                            } else {
+                                Toast.makeText(OrderDetailsActivity.this, orderHistoryBaseResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                            hideSnackbar();
+                            mSwRefreshing = false;
+                            mSwipeRefreshLayout.setRefreshing(false);
+                            mSwipeRefreshLayout.setEnabled(true);
+                        }
+
+                        @Override
+                        public void failure(RetrofitError error) {
+                            hideSnackbar();
+                            handleRetrofitError(error);
+                            mSwRefreshing = false;
+                            mSwipeRefreshLayout.setRefreshing(false);
+                            mSwipeRefreshLayout.setEnabled(true);
+                        }
+                    }
+            );
+        } else {
+            mSwRefreshing = false;
+            mSwipeRefreshLayout.setRefreshing(false);
+            mSwipeRefreshLayout.setEnabled(true);
+        }
     }
 
     @Override
