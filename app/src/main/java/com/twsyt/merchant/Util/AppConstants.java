@@ -56,6 +56,7 @@ public class AppConstants {
 
     public static final String[] GET_NOTIFIED_FOR_STATUSES =
             {
+                    ORDER_PENDING,
                     ORDER_LATE_ACCEPT,
                     ORDER_LATE_DELIVERY,
                     ORDER_REJECTED,
