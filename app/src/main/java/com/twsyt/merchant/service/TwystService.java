@@ -38,6 +38,6 @@ public interface TwystService {
     @GET("/api/v4/orders")
     void getAllOrdersAM(@Query("token") String token, Callback<BaseResponse<ArrayList<OrderHistory>>> callback);
 
-    @PUT("/api/v4/order")
-    public void putOrderUpdate(@Query("token") String token, @Body() OrderUpdate orderUpdate, Callback<BaseResponse> callback);
+    @PUT("/api/v4/outlet/order/{order_id}")
+    public void putOrderUpdate(@Path("order_id") String orderID,@Query("token") String token, @Body() OrderUpdate orderUpdate, Callback<BaseResponse> callback);
 }

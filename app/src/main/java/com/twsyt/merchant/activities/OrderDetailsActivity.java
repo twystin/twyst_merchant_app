@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,6 +21,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.twsyt.merchant.R;
 import com.twsyt.merchant.Util.AppConstants;
 import com.twsyt.merchant.Util.OrdersDataBaseSingleTon;
@@ -28,12 +31,15 @@ import com.twsyt.merchant.adapters.OrderDetailsAdapter;
 import com.twsyt.merchant.adapters.OrderStatusAdapter;
 import com.twsyt.merchant.layout.CustomSwipeRefreshLayout;
 import com.twsyt.merchant.model.BaseResponse;
+import com.twsyt.merchant.model.LoginResponse;
 import com.twsyt.merchant.model.menu.Items;
 import com.twsyt.merchant.model.menu.OrderAction;
 import com.twsyt.merchant.model.order.Address;
 import com.twsyt.merchant.model.order.OrderHistory;
+import com.twsyt.merchant.model.order.OrderUpdate;
 import com.twsyt.merchant.service.HttpService;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import retrofit.Callback;
@@ -74,6 +80,7 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
         setupSwipeRefresh();
         processExtraData();
         ((CustomSwipeRefreshLayout) mSwipeRefreshLayout).setScrollView((ScrollView) findViewById(R.id.scrollView));
+        setOnClickActions();
     }
 
     @Override
@@ -300,6 +307,101 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
             // other 'case' lines to check for other
             // permissions this app might request
         }
+    }
+
+    private void setOnClickActions() {
+        LinearLayout acceptLL = (LinearLayout)findViewById(R.id.ll_accept);
+        LinearLayout rejectLL = (LinearLayout)findViewById(R.id.ll_reject);
+        LinearLayout dispatchedLL = (LinearLayout)findViewById(R.id.ll_dispatched);
+//        LinearLayout deliveredLL = (LinearLayout)findViewById(R.id.ll_delivered);
+
+        SharedPreferences sp = getSharedPreferences(AppConstants.PREFERENCE_SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        Type type = new TypeToken<LoginResponse>() {
+        }.getType();
+        LoginResponse loginResp = new Gson().fromJson(sp.getString(AppConstants.LOGIN_RESPONSE_JSON, null), type);
+
+        OrderHistory order = OrdersDataBaseSingleTon.getInstance(OrderDetailsActivity.this)
+                .getOrderFromOrderId(orderId);
+
+        final OrderUpdate orderUpdate = new OrderUpdate();
+        orderUpdate.set_id(order.getOrderID());
+        orderUpdate.setAm_email(loginResp.getProfile().getEmail());
+
+        acceptLL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                orderUpdate.setUpdate_type(AppConstants.ACCEPT);
+                HttpService.getInstance().putOrderUpdate(orderId, Utils.getUserToken(OrderDetailsActivity.this), orderUpdate, new Callback<BaseResponse>() {
+                    @Override
+                    public void success(BaseResponse baseResponse, Response response) {
+
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+
+                    }
+                });
+            }
+        });
+
+
+        rejectLL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                orderUpdate.setUpdate_type(AppConstants.REJECT);
+                HttpService.getInstance().putOrderUpdate(orderId, Utils.getUserToken(OrderDetailsActivity.this), orderUpdate, new Callback<BaseResponse>() {
+                    @Override
+                    public void success(BaseResponse baseResponse, Response response) {
+
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+
+                    }
+                });
+            }
+        });
+
+
+        dispatchedLL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                orderUpdate.setUpdate_type(AppConstants.DISPATCH);
+                HttpService.getInstance().putOrderUpdate(orderId, Utils.getUserToken(OrderDetailsActivity.this), orderUpdate, new Callback<BaseResponse>() {
+                    @Override
+                    public void success(BaseResponse baseResponse, Response response) {
+
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+
+                    }
+                });
+            }
+        });
+
+//        deliveredLL.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                orderUpdate.setUpdate_type(AppConstants.DELIVERED);
+//                HttpService.getInstance().putOrderUpdate(orderId, Utils.getUserToken(OrderDetailsActivity.this), orderUpdate, new Callback<BaseResponse>() {
+//                    @Override
+//                    public void success(BaseResponse baseResponse, Response response) {
+//
+//                    }
+//
+//                    @Override
+//                    public void failure(RetrofitError error) {
+//
+//                    }
+//                });
+//            }
+//        });
+
+
     }
 
 }

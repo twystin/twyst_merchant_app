@@ -97,4 +97,9 @@ public class AppConstants {
 
     public static final String INDIAN_RUPEE_SYMBOL = "₹";
     public static final String TAB_POSITION = "tab_position_to_show";
+
+    public static final String ACCEPT = "accept";
+    public static final String REJECT = "reject";
+    public static final String DISPATCH = "dispatch";
+    public static final String DELIVERED = "delivered";
 }
