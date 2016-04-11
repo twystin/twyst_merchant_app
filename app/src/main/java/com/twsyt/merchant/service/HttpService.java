@@ -9,6 +9,7 @@ import com.twsyt.merchant.model.BaseResponse;
 import com.twsyt.merchant.model.Login;
 import com.twsyt.merchant.model.LoginResponse;
 import com.twsyt.merchant.model.order.OrderHistory;
+import com.twsyt.merchant.model.order.OrderUpdate;
 
 import java.util.ArrayList;
 
@@ -66,4 +67,9 @@ public class HttpService {
     public void getAllOrdersAM(String token, Callback<BaseResponse<ArrayList<OrderHistory>>> callback) {
         twystService.getAllOrdersAM(token, callback);
     }
+
+    public void putOrderUpdate(String token, OrderUpdate orderUpdate, Callback<BaseResponse> callback) {
+        twystService.putOrderUpdate(token, orderUpdate, callback);
+    }
+
 }

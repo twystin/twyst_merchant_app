@@ -5,6 +5,7 @@ import com.twsyt.merchant.model.BaseResponse;
 import com.twsyt.merchant.model.Login;
 import com.twsyt.merchant.model.LoginResponse;
 import com.twsyt.merchant.model.order.OrderHistory;
+import com.twsyt.merchant.model.order.OrderUpdate;
 
 import java.util.ArrayList;
 
@@ -12,6 +13,7 @@ import retrofit.Callback;
 import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.POST;
+import retrofit.http.PUT;
 import retrofit.http.Path;
 import retrofit.http.Query;
 
@@ -35,4 +37,7 @@ public interface TwystService {
     // http://staging.twyst.in/api/v4/orders?token=8XhMaSrQiB-vOUBoMueSIoK6VI_ErH67
     @GET("/api/v4/orders")
     void getAllOrdersAM(@Query("token") String token, Callback<BaseResponse<ArrayList<OrderHistory>>> callback);
+
+    @PUT("/api/v4/order")
+    public void putOrderUpdate(@Query("token") String token, @Body() OrderUpdate orderUpdate, Callback<BaseResponse> callback);
 }

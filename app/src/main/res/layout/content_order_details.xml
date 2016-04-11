@@ -1,369 +1,386 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context="com.twsyt.merchant.activities.OrderDetailsActivity"
-        tools:showIn="@layout/activity_order_details">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/card_order_status"
-            style="@style/card_view_style"
-            card_view:cardBackgroundColor="@color/white">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <LinearLayout
+                android:id="@+id/ll_order_details"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:padding="8dp">
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                tools:context="com.twsyt.merchant.activities.OrderDetailsActivity"
+                tools:showIn="@layout/activity_order_details">
 
-                <TextView
-                    android:id="@+id/tv_order_status"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Order Status"
-                    android:textColor="@android:color/black" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginTop="4dp"
-                    android:background="@color/background_grey" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/rv_orderStatus"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
-                </LinearLayout>
-            </LinearLayout>
-        </android.support.v7.widget.CardView>
-
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/card_order_summary"
-            style="@style/card_view_style"
-            card_view:cardBackgroundColor="@color/white">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="8dp">
-
-                <TextView
-                    android:id="@+id/tv_order_summary"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Order Summary"
-                    android:textColor="@android:color/black" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginTop="4dp"
-                    android:background="@color/background_grey" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginTop="4dp"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:src="@drawable/outlet" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Outlet"
-                            android:textColor="@color/text_grey" />
-
-                        <TextView
-                            android:id="@+id/tv_outlet_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="La Pino'z Pizza" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:src="@drawable/payment" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Payment Mode"
-                            android:textColor="@color/text_grey" />
-
-                        <TextView
-                            android:id="@+id/tv_payement_mode"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="COD" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:src="@drawable/rupee" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Amount"
-                            android:textColor="@color/text_grey" />
-
-                        <TextView
-                            android:id="@+id/tv_order_amount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="Rs. 2500" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/ll_call_outlet"
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:background="@drawable/button_green_selector"
-                    android:clickable="true"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:paddingBottom="4dp"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="8dp"
-                    android:paddingTop="4dp">
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_marginRight="8dp"
-                        android:src="@drawable/call_icon" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="4dp"
-                        android:text="Call Outlet" />
-                </LinearLayout>
-            </LinearLayout>
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/card_user_details"
-            style="@style/card_view_style"
-            card_view:cardBackgroundColor="@color/white">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="8dp">
-
-                <TextView
-                    android:id="@+id/tv_user_details"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="User Details"
-                    android:textColor="@android:color/black" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginTop="4dp"
-                    android:background="@color/background_grey" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                <android.support.v7.widget.CardView
+                    android:id="@+id/card_order_status"
+                    style="@style/card_view_style"
+                    card_view:cardBackgroundColor="@color/white">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:layout_marginTop="4dp"
-                        android:orientation="horizontal">
+                        android:orientation="vertical"
+                        android:padding="8dp">
+
+                        <TextView
+                            android:id="@+id/tv_order_status"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Order Status"
+                            android:textColor="@android:color/black" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginBottom="4dp"
+                            android:layout_marginTop="4dp"
+                            android:background="@color/background_grey" />
 
                         <LinearLayout
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
                             android:orientation="vertical">
 
+                            <android.support.v7.widget.RecyclerView
+                                android:id="@+id/rv_orderStatus"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+                        </LinearLayout>
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
+
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/card_order_summary"
+                    style="@style/card_view_style"
+                    card_view:cardBackgroundColor="@color/white">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="8dp">
+
+                        <TextView
+                            android:id="@+id/tv_order_summary"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Order Summary"
+                            android:textColor="@android:color/black" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginBottom="4dp"
+                            android:layout_marginTop="4dp"
+                            android:background="@color/background_grey" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            android:layout_marginTop="4dp"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <ImageView
+                                    android:layout_width="36dp"
+                                    android:layout_height="36dp"
+                                    android:src="@drawable/outlet" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Outlet"
+                                    android:textColor="@color/text_grey" />
+
+                                <TextView
+                                    android:id="@+id/tv_outlet_name"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:text="La Pino'z Pizza" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <ImageView
+                                    android:layout_width="36dp"
+                                    android:layout_height="36dp"
+                                    android:src="@drawable/payment" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Payment Mode"
+                                    android:textColor="@color/text_grey" />
+
+                                <TextView
+                                    android:id="@+id/tv_payement_mode"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:text="COD" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <ImageView
+                                    android:layout_width="36dp"
+                                    android:layout_height="36dp"
+                                    android:src="@drawable/rupee" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Amount"
+                                    android:textColor="@color/text_grey" />
+
+                                <TextView
+                                    android:id="@+id/tv_order_amount"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:text="Rs. 2500" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/ll_call_outlet"
+                            android:layout_width="120dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:background="@drawable/button_green_selector"
+                            android:clickable="true"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:paddingBottom="4dp"
+                            android:paddingLeft="8dp"
+                            android:paddingRight="8dp"
+                            android:paddingTop="4dp">
+
                             <ImageView
-                                android:layout_width="36dp"
-                                android:layout_height="36dp"
-                                android:src="@drawable/user_icon" />
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:layout_marginRight="8dp"
+                                android:src="@drawable/call_icon" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Name"
-                                android:textColor="@color/text_grey" />
-
-                            <TextView
-                                android:id="@+id/tv_user_name"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
-                                android:gravity="center"
-                                android:paddingLeft="4dp"
-                                android:paddingRight="4dp"
-                                android:text="Abhimanyu Lal" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <ImageView
-                                android:layout_width="36dp"
-                                android:layout_height="36dp"
-                                android:src="@drawable/address_location" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Address"
-                                android:textColor="@color/text_grey" />
-
-                            <TextView
-                                android:id="@+id/tv_user_address"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
-                                android:ellipsize="end"
-                                android:gravity="center"
-                                android:maxLines="3"
-                                android:paddingLeft="4dp"
-                                android:paddingRight="4dp"
-                                android:text="A 5/16, Sector 26-A, DLF Phase 1, Gurgaon" />
+                                android:layout_margin="4dp"
+                                android:text="Call Outlet" />
                         </LinearLayout>
                     </LinearLayout>
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/card_user_details"
+                    style="@style/card_view_style"
+                    card_view:cardBackgroundColor="@color/white">
 
                     <LinearLayout
-                        android:id="@+id/ll_call_user"
-                        android:layout_width="120dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:background="@drawable/button_green_selector"
-                        android:clickable="true"
-                        android:gravity="center"
-                        android:orientation="horizontal"
-                        android:paddingBottom="4dp"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="8dp"
-                        android:paddingTop="4dp">
-
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:layout_marginRight="8dp"
-                            android:src="@drawable/call_icon" />
+                        android:orientation="vertical"
+                        android:padding="8dp">
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:id="@+id/tv_user_details"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin="4dp"
-                            android:text="Call User" />
+                            android:text="User Details"
+                            android:textColor="@android:color/black" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginBottom="4dp"
+                            android:layout_marginTop="4dp"
+                            android:background="@color/background_grey" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="4dp"
+                                android:layout_marginTop="4dp"
+                                android:orientation="horizontal">
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:orientation="vertical">
+
+                                    <ImageView
+                                        android:layout_width="36dp"
+                                        android:layout_height="36dp"
+                                        android:src="@drawable/user_icon" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Name"
+                                        android:textColor="@color/text_grey" />
+
+                                    <TextView
+                                        android:id="@+id/tv_user_name"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="8dp"
+                                        android:gravity="center"
+                                        android:paddingLeft="4dp"
+                                        android:paddingRight="4dp"
+                                        android:text="Abhimanyu Lal" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:orientation="vertical">
+
+                                    <ImageView
+                                        android:layout_width="36dp"
+                                        android:layout_height="36dp"
+                                        android:src="@drawable/address_location" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Address"
+                                        android:textColor="@color/text_grey" />
+
+                                    <TextView
+                                        android:id="@+id/tv_user_address"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="8dp"
+                                        android:ellipsize="end"
+                                        android:gravity="center"
+                                        android:maxLines="3"
+                                        android:paddingLeft="4dp"
+                                        android:paddingRight="4dp"
+                                        android:text="A 5/16, Sector 26-A, DLF Phase 1, Gurgaon" />
+                                </LinearLayout>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/ll_call_user"
+                                android:layout_width="120dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:background="@drawable/button_green_selector"
+                                android:clickable="true"
+                                android:gravity="center"
+                                android:orientation="horizontal"
+                                android:paddingBottom="4dp"
+                                android:paddingLeft="8dp"
+                                android:paddingRight="8dp"
+                                android:paddingTop="4dp">
+
+                                <ImageView
+                                    android:layout_width="16dp"
+                                    android:layout_height="16dp"
+                                    android:layout_marginRight="8dp"
+                                    android:src="@drawable/call_icon" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="4dp"
+                                    android:text="Call User" />
+                            </LinearLayout>
+
+                        </LinearLayout>
                     </LinearLayout>
-
-                </LinearLayout>
-            </LinearLayout>
-        </android.support.v7.widget.CardView>
+                </android.support.v7.widget.CardView>
 
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/card_order_details"
-            style="@style/card_view_style"
-            card_view:cardBackgroundColor="@color/white">
+                <android.support.v7.widget.CardView
+                    android:id="@+id/card_order_details"
+                    style="@style/card_view_style"
+                    card_view:cardBackgroundColor="@color/white">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="8dp">
-
-                <TextView
-                    android:id="@+id/tv_order_details"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Order Details"
-                    android:textColor="@android:color/black" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginTop="4dp"
-                    android:background="@color/background_grey" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/rv_orderDetails"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="8dp">
 
-                </LinearLayout>
+                        <TextView
+                            android:id="@+id/tv_order_details"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Order Details"
+                            android:textColor="@android:color/black" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginBottom="4dp"
+                            android:layout_marginTop="4dp"
+                            android:background="@color/background_grey" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <android.support.v7.widget.RecyclerView
+                                android:id="@+id/rv_orderDetails"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+
+                        </LinearLayout>
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
+
             </LinearLayout>
-        </android.support.v7.widget.CardView>
 
+        </ScrollView>
 
     </LinearLayout>
 
-</ScrollView>
+    <include layout="@layout/layout_order_actions" />
+
+</LinearLayout>
 
