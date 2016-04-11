@@ -16,6 +16,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ import com.twsyt.merchant.Util.OrdersDataBaseSingleTon;
 import com.twsyt.merchant.Util.Utils;
 import com.twsyt.merchant.adapters.OrderDetailsAdapter;
 import com.twsyt.merchant.adapters.OrderStatusAdapter;
+import com.twsyt.merchant.layout.CustomSwipeRefreshLayout;
 import com.twsyt.merchant.model.BaseResponse;
 import com.twsyt.merchant.model.menu.Items;
 import com.twsyt.merchant.model.menu.OrderAction;
@@ -71,6 +73,7 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
         setupToolBar();
         setupSwipeRefresh();
         processExtraData();
+        ((CustomSwipeRefreshLayout) mSwipeRefreshLayout).setScrollView((ScrollView) findViewById(R.id.scrollView));
     }
 
     @Override

@@ -12,12 +12,12 @@
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <com.twsyt.merchant.layout.CustomSwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <include layout="@layout/content_order_details" />
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </com.twsyt.merchant.layout.CustomSwipeRefreshLayout>
 </LinearLayout>
