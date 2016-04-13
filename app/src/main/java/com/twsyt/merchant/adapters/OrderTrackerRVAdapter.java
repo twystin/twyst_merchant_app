@@ -77,7 +77,7 @@ public class OrderTrackerRVAdapter extends RecyclerView.Adapter<OrderTrackerRVAd
             } else
                 paymentMode = "TAKE PAYMENT";
             holder.tv_paymentType.setText(paymentMode);
-        } // TODO - check if payment will be available in order object.
+        }
 
         // Order Cost
         holder.tv_orderCost.setText(String.valueOf(order.getOrderCost()));
@@ -89,7 +89,7 @@ public class OrderTrackerRVAdapter extends RecyclerView.Adapter<OrderTrackerRVAd
                 if (order.getUser().getLast_name() != null)
                     name += " " + order.getUser().getLast_name();
                 holder.tv_username.setText(name);
-            } // TODO - why no name in order object?
+            }
         }
 
         // User address
@@ -104,14 +104,14 @@ public class OrderTrackerRVAdapter extends RecyclerView.Adapter<OrderTrackerRVAd
                 s += ", " + address.getCity();
 
         }
-        holder.tv_address.setText(s); // TODO - need to see which address object to use.
+        holder.tv_address.setText(s);
 
         // Load user image.
         // TODO - Currently image not available in order object. Check where to get it from.
-        Glide.with(holder.iv_userImage.getContext())
-                .load(order.getBackground()) // This is not background. Should be user image. temp only;
+        /*Glide.with(holder.iv_userImage.getContext())
+                .load() // This is not background. Should be user image. temp only;
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(holder.iv_userImage);
+                .into(holder.iv_userImage);*/
     }
 
     @Override
