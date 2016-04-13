@@ -57,6 +57,15 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
     public static final int OUTLET = 1;
     String userPhone;
     String outletPhone;
+    OrderUpdate orderUpdate;
+    String orderStatus;
+
+    LinearLayout acceptLL;
+    LinearLayout rejectLL;
+    LinearLayout dispatchedLL;
+    LinearLayout abandonedLL;
+    LinearLayout deliveredLL;
+    LinearLayout orderActionsLL;
 
     BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -80,6 +89,13 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
         setupSwipeRefresh();
         processExtraData();
         ((CustomSwipeRefreshLayout) mSwipeRefreshLayout).setScrollView((ScrollView) findViewById(R.id.scrollView));
+        orderActionsLL = (LinearLayout) findViewById(R.id.ll_order_actions);
+        acceptLL = (LinearLayout) findViewById(R.id.ll_accept);
+        rejectLL = (LinearLayout) findViewById(R.id.ll_reject);
+        dispatchedLL = (LinearLayout) findViewById(R.id.ll_dispatched);
+        abandonedLL = (LinearLayout) findViewById(R.id.ll_abandoned);
+        deliveredLL = (LinearLayout) findViewById(R.id.ll_delivered);
+
         setOnClickActions();
     }
 
@@ -310,9 +326,6 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
     }
 
     private void setOnClickActions() {
-        LinearLayout acceptLL = (LinearLayout) findViewById(R.id.ll_accept);
-        LinearLayout rejectLL = (LinearLayout) findViewById(R.id.ll_reject);
-        LinearLayout dispatchedLL = (LinearLayout) findViewById(R.id.ll_dispatched);
 //        LinearLayout deliveredLL = (LinearLayout)findViewById(R.id.ll_delivered);
 
         SharedPreferences sp = getSharedPreferences(AppConstants.PREFERENCE_SHARED_PREF_NAME, Context.MODE_PRIVATE);
@@ -323,85 +336,146 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
         OrderHistory order = OrdersDataBaseSingleTon.getInstance(OrderDetailsActivity.this)
                 .getOrderFromOrderId(orderId);
 
-        final OrderUpdate orderUpdate = new OrderUpdate();
+        orderStatus = order.getOrderStatus();
+
+        orderUpdate = new OrderUpdate();
         orderUpdate.set_id(order.getOrderID());
         orderUpdate.setAm_email(loginResp.getProfile().getEmail());
 
-        acceptLL.setOnClickListener(new View.OnClickListener() {
+        chooseActions();
+
+    }
+
+
+    private void chooseActions() {
+        switch (orderStatus) {
+            case AppConstants.ORDER_PENDING: {
+                showAcceptButton();
+                showRejectButton();
+                break;
+            }
+
+            case AppConstants.ORDER_ACCEPTED: {
+                showDispatchedButton();
+                break;
+            }
+
+            case AppConstants.ORDER_LATE_ACCEPT: {
+                showAcceptButton();
+                showRejectButton();
+                break;
+            }
+
+            case AppConstants.ORDER_LATE_DELIVERY: {
+                showAbandonedButton();
+                showDispatchedButton();
+                showDeliveredButton();
+                break;
+            }
+
+            default:
+                hideAllActionButtons();
+        }
+    }
+
+    private void showRejectButton() {
+        makeActionsVisible();
+        rejectLL.setVisibility(View.VISIBLE);
+        if (rejectLL != null) {
+            rejectLL.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    updateOrderwithServer(AppConstants.REJECT);
+                }
+            });
+        }
+    }
+
+    private void showAcceptButton() {
+        makeActionsVisible();
+        acceptLL.setVisibility(View.VISIBLE);
+        if (acceptLL != null) {
+            acceptLL.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    updateOrderwithServer(AppConstants.ACCEPT);
+                }
+            });
+        }
+    }
+
+    private void showDispatchedButton() {
+        makeActionsVisible();
+        dispatchedLL.setVisibility(View.VISIBLE);
+        if (dispatchedLL != null) {
+            dispatchedLL.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    updateOrderwithServer(AppConstants.DISPATCH);
+                }
+            });
+        }
+    }
+
+    private void showAbandonedButton() {
+        makeActionsVisible();
+        abandonedLL.setVisibility(View.VISIBLE);
+        if (abandonedLL != null) {
+            abandonedLL.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    updateOrderwithServer(AppConstants.ABANDONED);
+                }
+            });
+        }
+    }
+
+    private void showDeliveredButton() {
+        makeActionsVisible();
+        deliveredLL.setVisibility(View.VISIBLE);
+        if (deliveredLL != null) {
+            deliveredLL.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    updateOrderwithServer(AppConstants.DELIVERED);
+                }
+            });
+        }
+    }
+
+    private void makeActionsVisible() {
+        if (orderActionsLL != null) {
+            orderActionsLL.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void updateOrderwithServer(String s) {
+        orderUpdate.setUpdate_type(s);
+        HttpService.getInstance().putOrderUpdate(orderId, Utils.getUserToken(OrderDetailsActivity.this), orderUpdate, new Callback<BaseResponse>() {
             @Override
-            public void onClick(View v) {
-                orderUpdate.setUpdate_type(AppConstants.ACCEPT);
-                HttpService.getInstance().putOrderUpdate(orderId, Utils.getUserToken(OrderDetailsActivity.this), orderUpdate, new Callback<BaseResponse>() {
-                    @Override
-                    public void success(BaseResponse baseResponse, Response response) {
+            public void success(BaseResponse baseResponse, Response response) {
+                if (baseResponse.isResponse()) {
+                    hideAllActionButtons();
+                    chooseActions();
+                }
+            }
 
-                    }
+            @Override
+            public void failure(RetrofitError error) {
 
-                    @Override
-                    public void failure(RetrofitError error) {
-
-                    }
-                });
             }
         });
+    }
 
-
-        rejectLL.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                orderUpdate.setUpdate_type(AppConstants.REJECT);
-                HttpService.getInstance().putOrderUpdate(orderId, Utils.getUserToken(OrderDetailsActivity.this), orderUpdate, new Callback<BaseResponse>() {
-                    @Override
-                    public void success(BaseResponse baseResponse, Response response) {
-
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-
-                    }
-                });
-            }
-        });
-
-
-        dispatchedLL.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                orderUpdate.setUpdate_type(AppConstants.DISPATCH);
-                HttpService.getInstance().putOrderUpdate(orderId, Utils.getUserToken(OrderDetailsActivity.this), orderUpdate, new Callback<BaseResponse>() {
-                    @Override
-                    public void success(BaseResponse baseResponse, Response response) {
-
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-
-                    }
-                });
-            }
-        });
-
-//        deliveredLL.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                orderUpdate.setUpdate_type(AppConstants.DELIVERED);
-//                HttpService.getInstance().putOrderUpdate(orderId, Utils.getUserToken(OrderDetailsActivity.this), orderUpdate, new Callback<BaseResponse>() {
-//                    @Override
-//                    public void success(BaseResponse baseResponse, Response response) {
-//
-//                    }
-//
-//                    @Override
-//                    public void failure(RetrofitError error) {
-//
-//                    }
-//                });
-//            }
-//        });
-
-
+    private void hideAllActionButtons() {
+        acceptLL.setVisibility(View.GONE);
+        rejectLL.setVisibility(View.GONE);
+        dispatchedLL.setVisibility(View.GONE);
+        abandonedLL.setVisibility(View.GONE);
+        deliveredLL.setVisibility(View.GONE);
+        if(orderActionsLL.getVisibility() == View.VISIBLE){
+            orderActionsLL.setVisibility(View.GONE);
+        }
     }
 
 }

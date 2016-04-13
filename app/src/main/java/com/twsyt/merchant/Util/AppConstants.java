@@ -97,6 +97,7 @@ public class AppConstants {
     public static final String REJECT = "reject";
     public static final String DISPATCH = "dispatch";
     public static final String DELIVERED = "delivered";
+    public static final String ABANDONED = "abandoned";
 
     public static final String RETROFIT_FAILURE_ERROR = "retrofit_failure_error";
     public static final int DOWNLOAD_FAILED = 0;
