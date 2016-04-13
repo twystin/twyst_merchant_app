@@ -56,7 +56,8 @@ public abstract class BaseActionActivity extends AppCompatActivity {
         }
     }
 
-    protected abstract void swipeRefresh();
+    protected void swipeRefresh() {
+    }
 
     public void buildAndShowSnackbarWithMessage(String msg) {
         final Snackbar snackbar = Snackbar.with(this.getApplicationContext())

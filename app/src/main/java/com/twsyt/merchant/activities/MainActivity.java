@@ -9,8 +9,8 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
+import android.widget.Toast;
 
-import com.bumptech.glide.util.Util;
 import com.twsyt.merchant.R;
 import com.twsyt.merchant.Util.AppConstants;
 import com.twsyt.merchant.Util.OrdersDataBaseSingleTon;
@@ -19,6 +19,8 @@ import com.twsyt.merchant.adapters.OrderTrackerFragmentAdapter;
 import com.twsyt.merchant.fragments.OrderTrackerPageFragment;
 
 import java.util.List;
+
+import retrofit.RetrofitError;
 
 
 public class MainActivity extends BaseActionActivity {
@@ -38,12 +40,13 @@ public class MainActivity extends BaseActionActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 int resultCode = intent.getIntExtra(AppConstants.NEW_DATA_AVAILABLE, 0);
+                Bundle bundle = intent.getExtras();
                 if (mSwRefreshing) {
                     mSwRefreshing = false;
                     mSwipeRefreshLayout.setRefreshing(false);
                     mSwipeRefreshLayout.setEnabled(true);
                 }
-                notifyAllFrags(resultCode);
+                notifyAllFrags(resultCode, bundle);
             }
         };
         isNetworkAvailable();
@@ -51,25 +54,13 @@ public class MainActivity extends BaseActionActivity {
         setupToolBar();
         setupSwipeRefresh();
         setupFragmentAdapter();
-        // Adding this processing after setupFragmentAdapter makes sure ViewPager is available.
+        // Adding this processing after setupFragmentAdapter makes sure ViewPager is not null.
         processExtraData();
-    }
-
-    private boolean isNetworkAvailable() {
-        if (!Utils.isNetworkAvailable(MainActivity.this)) {
-            buildAndShowSnackbarWithMessage(getResources().getString(R.string.no_internet_conn));
-            return false;
-        }
-        return true;
     }
 
     @Override
     protected void swipeRefresh() {
         syncWithServer();
-    }
-
-    private void syncWithServer() {
-        OrdersDataBaseSingleTon.getInstance(MainActivity.this).syncWithServer();
     }
 
     private void processExtraData() {
@@ -97,7 +88,7 @@ public class MainActivity extends BaseActionActivity {
     protected void onResume() {
         super.onResume();
         isNetworkAvailable();
-        notifyAllFrags(AppConstants.DOWNLOAD_SUCCESS);
+        notifyAllFrags(AppConstants.DOWNLOAD_SUCCESS, null);
     }
 
     @Override
@@ -152,7 +143,7 @@ public class MainActivity extends BaseActionActivity {
      *                   1: new Data available.
      *                   2: TODO - Add more for good UX.
      */
-    public void notifyAllFrags(int resultCode) {
+    public void notifyAllFrags(int resultCode, Bundle bundle) {
         if (resultCode == AppConstants.DOWNLOAD_SUCCESS) {
             // Tab names update
             if ((slidingTabs_orderTracker == null)) {
@@ -176,6 +167,30 @@ public class MainActivity extends BaseActionActivity {
                     }
                 }
             }
+        } else if (resultCode == AppConstants.DOWNLOAD_FAILED && (bundle != null)) {
+            RetrofitError retrofitError = (RetrofitError) bundle.getSerializable(AppConstants.RETROFIT_FAILURE_ERROR);
+            String responseMsg = bundle.getString(AppConstants.RETROFIT_FAILURE_NO_RESPONSE_MESSAGE);
+
+            if (responseMsg != null) {
+                Toast.makeText(this, responseMsg, Toast.LENGTH_SHORT).show();
+            }
+
+            if (retrofitError != null) {
+                hideSnackbar();
+                handleRetrofitError(retrofitError);
+            }
         }
+    }
+
+    private void syncWithServer() {
+        OrdersDataBaseSingleTon.getInstance(MainActivity.this).syncWithServer();
+    }
+
+    private boolean isNetworkAvailable() {
+        if (!Utils.isNetworkAvailable(MainActivity.this)) {
+            buildAndShowSnackbarWithMessage(getResources().getString(R.string.no_internet_conn));
+            return false;
+        }
+        return true;
     }
 }

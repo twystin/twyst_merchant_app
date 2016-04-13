@@ -1,16 +1,15 @@
 package com.twsyt.merchant.service;
 
 import android.app.IntentService;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -21,7 +20,6 @@ import com.twsyt.merchant.R;
 import com.twsyt.merchant.Util.AppConstants;
 import com.twsyt.merchant.Util.OrdersDataBaseSingleTon;
 import com.twsyt.merchant.Util.Utils;
-import com.twsyt.merchant.activities.MainActivity;
 import com.twsyt.merchant.activities.OrderDetailsActivity;
 import com.twsyt.merchant.model.BaseResponse;
 import com.twsyt.merchant.model.LoginResponse;
@@ -50,8 +48,6 @@ public class WebSocketService extends IntentService implements FayeListener {
     FayeClient mClient;
     private String token;
     private String channelName;
-
-    private OrderHistory mOrderHistory;
 
     //    private String token = "HAba02nFxNIrQGreYIv9JUev078YDF2q";
 
@@ -167,20 +163,21 @@ public class WebSocketService extends IntentService implements FayeListener {
                     @Override
                     public void success(BaseResponse<OrderHistory> orderHistoryBaseResponse, Response response) {
                         if (orderHistoryBaseResponse.isResponse()) {
-                            mOrderHistory = orderHistoryBaseResponse.getData();
-                            if (mOrderHistory != null) {
-                                updateOrdersDb(mOrderID);
-                                Utils.callRegisteredReceivers(WebSocketService.this, AppConstants.DOWNLOAD_SUCCESS);
-                                sendNotification(mOrderID);
-                            } else {
-                                Log.d(TAG, "Order fetched is null");
-                            }
+                            updateOrdersDb(mOrderID, orderHistoryBaseResponse.getData());
+                            Utils.callRegisteredReceivers(WebSocketService.this, AppConstants.DOWNLOAD_SUCCESS, null);
+                            sendNotification(mOrderID);
+                        } else {
+                            Bundle bundle = new Bundle();
+                            bundle.putString(AppConstants.RETROFIT_FAILURE_NO_RESPONSE_MESSAGE, orderHistoryBaseResponse.getMessage());
+                            Utils.callRegisteredReceivers(WebSocketService.this, AppConstants.DOWNLOAD_FAILED, bundle);
                         }
                     }
 
                     @Override
                     public void failure(RetrofitError error) {
-                        // TODO - Need to improve the UX here. show snackbar or something
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(AppConstants.RETROFIT_FAILURE_ERROR, error);
+                        Utils.callRegisteredReceivers(WebSocketService.this, AppConstants.DOWNLOAD_FAILED, bundle);
                     }
                 }
         );
@@ -223,8 +220,8 @@ public class WebSocketService extends IntentService implements FayeListener {
      *
      * @param orderId Id of the order
      */
-    private void updateOrdersDb(String orderId) {
-        OrdersDataBaseSingleTon.getInstance(WebSocketService.this).addOrUpdateOrder(orderId, mOrderHistory);
+    private void updateOrdersDb(String orderId, OrderHistory order) {
+        OrdersDataBaseSingleTon.getInstance(WebSocketService.this).addOrUpdateOrder(orderId, order);
         OrdersDataBaseSingleTon.getInstance(WebSocketService.this).storeInSharedPrefs();
     }
 }

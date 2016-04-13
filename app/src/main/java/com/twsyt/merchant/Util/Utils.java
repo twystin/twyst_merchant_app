@@ -2,20 +2,18 @@ package com.twsyt.merchant.Util;
 
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.content.SharedPreferencesCompat;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.twsyt.merchant.activities.LoginActivity;
 import com.twsyt.merchant.model.LoginResponse;
 import com.twsyt.merchant.model.menu.TimeStamp;
 import com.twsyt.merchant.service.WebSocketService;
@@ -103,9 +101,11 @@ public class Utils {
      *
      * @param resultCode 1: success, 0: failure
      */
-    public static void callRegisteredReceivers(Context context, int resultCode) {
+    public static void callRegisteredReceivers(Context context, int resultCode, Bundle bundle) {
         Intent intent = new Intent(AppConstants.INTENT_DOWNLOADED_ORDER);
         intent.putExtra(AppConstants.NEW_DATA_AVAILABLE, resultCode);
+        if (bundle != null)
+            intent.putExtras(bundle);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 

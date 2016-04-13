@@ -1,7 +1,5 @@
 package com.twsyt.merchant.Util;
 
-import com.twsyt.merchant.model.User;
-
 /**
  * Created by Raman on 3/30/2016.
  */
@@ -67,7 +65,7 @@ public class AppConstants {
     public static final String INTENT_ORDER_ID = "order_id_from_main_to_detail";
     public static final String INTENT_DOWNLOADED_ORDER = "downloaded_order";
     public static final String NEW_DATA_AVAILABLE = "new_data_available";
-    public static final int DOWNLOAD_SUCCESS = 1;
+
     public static final boolean IS_DEVELOPMENT = true;
     /*
         Role Book
@@ -99,4 +97,9 @@ public class AppConstants {
     public static final String REJECT = "reject";
     public static final String DISPATCH = "dispatch";
     public static final String DELIVERED = "delivered";
+
+    public static final String RETROFIT_FAILURE_ERROR = "retrofit_failure_error";
+    public static final int DOWNLOAD_FAILED = 0;
+    public static final int DOWNLOAD_SUCCESS = 1;
+    public static final String RETROFIT_FAILURE_NO_RESPONSE_MESSAGE = "RETROFIT_FAILURE_NO_RESPONSE_MESSAGE";
 }

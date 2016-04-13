@@ -310,9 +310,9 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
     }
 
     private void setOnClickActions() {
-        LinearLayout acceptLL = (LinearLayout)findViewById(R.id.ll_accept);
-        LinearLayout rejectLL = (LinearLayout)findViewById(R.id.ll_reject);
-        LinearLayout dispatchedLL = (LinearLayout)findViewById(R.id.ll_dispatched);
+        LinearLayout acceptLL = (LinearLayout) findViewById(R.id.ll_accept);
+        LinearLayout rejectLL = (LinearLayout) findViewById(R.id.ll_reject);
+        LinearLayout dispatchedLL = (LinearLayout) findViewById(R.id.ll_dispatched);
 //        LinearLayout deliveredLL = (LinearLayout)findViewById(R.id.ll_delivered);
 
         SharedPreferences sp = getSharedPreferences(AppConstants.PREFERENCE_SHARED_PREF_NAME, Context.MODE_PRIVATE);

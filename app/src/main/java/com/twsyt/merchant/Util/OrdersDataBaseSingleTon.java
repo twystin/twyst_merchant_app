@@ -1,23 +1,16 @@
 package com.twsyt.merchant.Util;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.util.ArrayMap;
+import android.os.Bundle;
 import android.util.Log;
-import android.view.ViewDebug;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.twsyt.merchant.TwystApplication;
-import com.twsyt.merchant.activities.MainActivity;
 import com.twsyt.merchant.model.BaseResponse;
 import com.twsyt.merchant.model.LoginResponse;
 import com.twsyt.merchant.model.order.OrderHistory;
 import com.twsyt.merchant.service.HttpService;
-import com.twsyt.merchant.service.WebSocketService;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
@@ -35,11 +28,11 @@ import retrofit.client.Response;
 /**
  * Singleton Class for holding data(order information.)
  * This needs to be thread safe as data will be loaded in WebSocketService and read by activities.
- * <p/>
+ * <p>
  * Data is stored in two formats.
  * 1. Map(mOrderIdMap)      - key: orderId,     Val: Order Info object
  * 2. Map(mOrderStatusMap)  - key: orderStatus, Val: orderId
- * <p/>
+ * <p>
  * Before the WebSocketService is destroyed, all the orders present in mOrderIdMap are stored in SharedPreferences for later use.
  * On a new start, data is loaded from Server, if network is available else from SharedPreferences.
  */
@@ -119,12 +112,19 @@ public class OrdersDataBaseSingleTon {
                                 addOrUpdateOrder(order.getOrderID(), order);
                             }
                             storeInSharedPrefs();
-                            Utils.callRegisteredReceivers(mContext, AppConstants.DOWNLOAD_SUCCESS);
+                            Utils.callRegisteredReceivers(mContext, AppConstants.DOWNLOAD_SUCCESS, null);
+                        } else {
+                            Bundle bundle = new Bundle();
+                            bundle.putString(AppConstants.RETROFIT_FAILURE_NO_RESPONSE_MESSAGE, arrayListBaseResponse.getMessage());
+                            Utils.callRegisteredReceivers(mContext, AppConstants.DOWNLOAD_FAILED, bundle);
                         }
                     }
 
                     @Override
                     public void failure(RetrofitError error) {
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(AppConstants.RETROFIT_FAILURE_ERROR, error);
+                        Utils.callRegisteredReceivers(mContext, AppConstants.DOWNLOAD_FAILED, bundle);
                     }
                 });
                 break;

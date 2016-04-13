@@ -1,18 +1,13 @@
 package com.twsyt.merchant.activities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -26,14 +21,13 @@ import com.twsyt.merchant.model.BaseResponse;
 import com.twsyt.merchant.model.Login;
 import com.twsyt.merchant.model.LoginResponse;
 import com.twsyt.merchant.service.HttpService;
-import com.twsyt.merchant.service.WebSocketService;
 
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActionActivity {
 
     private String LOG_TAG = LoginActivity.this.getClass().getSimpleName();
 
@@ -93,10 +87,15 @@ public class LoginActivity extends AppCompatActivity {
     private void performLogin() {
         loginButton.setEnabled(false);
 
-        circularProgressBar_ll = (LinearLayout) findViewById(R.id.circularProgressBar_ll);
-        circularProgressBar = (CircularProgressBar) findViewById(R.id.circularProgressBar);
+        if (circularProgressBar_ll == null)
+            circularProgressBar_ll = (LinearLayout) findViewById(R.id.circularProgressBar_ll);
 
-        circularProgressBar.setVisibility(View.VISIBLE);
+        if (circularProgressBar == null)
+            circularProgressBar = (CircularProgressBar) findViewById(R.id.circularProgressBar);
+
+        if (circularProgressBar != null) {
+            circularProgressBar.setVisibility(View.VISIBLE);
+        }
         circularProgressBar_ll.setVisibility(View.VISIBLE);
 
         if (!TextUtils.isEmpty(et_userId.getText())) {
@@ -122,19 +121,20 @@ public class LoginActivity extends AppCompatActivity {
                     editor.commit();
                     Utils.checkAndStartWebSocketService(LoginActivity.this);
                     StartMainActivity();
-                    Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(LoginActivity.this, "Login Unsuccessful due to unknown Error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, loginResponseBaseResponse.getMessage(), Toast.LENGTH_SHORT).show();
                 }
                 hideProgressHUDInLayout();
+                hideSnackbar();
             }
 
             @Override
             public void failure(RetrofitError error) {
-                // TODO - Need to improve the UX here. show snackbar or something
-                Log.d(LOG_TAG, "Failed for some reason");
-                Toast.makeText(LoginActivity.this, "Login Unsuccessful", Toast.LENGTH_SHORT).show();
+//                Log.d(LOG_TAG, "Failed for some reason");
                 hideProgressHUDInLayout();
+                hideSnackbar();
+                handleRetrofitError(error);
             }
         });
     }
@@ -173,5 +173,8 @@ public class LoginActivity extends AppCompatActivity {
         return super.dispatchTouchEvent(ev);
     }
 
-
+    @Override
+    protected void snackBarRetryActionListener() {
+        performLogin();
+    }
 }
