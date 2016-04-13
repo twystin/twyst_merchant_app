@@ -55,14 +55,20 @@ public class MainActivity extends BaseActionActivity {
         processExtraData();
     }
 
-    private void isNetworkAvailable() {
+    private boolean isNetworkAvailable() {
         if (!Utils.isNetworkAvailable(MainActivity.this)) {
             buildAndShowSnackbarWithMessage(getResources().getString(R.string.no_internet_conn));
+            return false;
         }
+        return true;
     }
 
     @Override
     protected void swipeRefresh() {
+        syncWithServer();
+    }
+
+    private void syncWithServer() {
         OrdersDataBaseSingleTon.getInstance(MainActivity.this).syncWithServer();
     }
 
@@ -112,6 +118,13 @@ public class MainActivity extends BaseActionActivity {
         LocalBroadcastManager.getInstance(MainActivity.this).unregisterReceiver(mReceiver);
     }
 
+    @Override
+    protected void snackBarRetryActionListener() {
+        if (isNetworkAvailable()) {
+            syncWithServer();
+        }
+    }
+
     /**
      * Setup the adpater for all fragments. Since we have a lot of fragments, OrderTrackerFragmentAdapter extends
      * FragmentStatePagerAdapter.
@@ -130,7 +143,6 @@ public class MainActivity extends BaseActionActivity {
             slidingTabs_orderTracker.setupWithViewPager(mViewPager);
         }
     }
-
 
     /**
      * Get list of all created fragments and notify their respective adapters.

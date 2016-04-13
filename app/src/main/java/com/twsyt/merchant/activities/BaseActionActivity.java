@@ -69,12 +69,7 @@ public abstract class BaseActionActivity extends AppCompatActivity {
                 .actionListener(new ActionClickListener() {
                     @Override
                     public void onActionClicked(Snackbar snackbar) {
-                        Intent intent = getIntent();
-                        overridePendingTransition(0, 0);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        finish();
-                        overridePendingTransition(0, 0);
-                        startActivity(intent);
+                        snackBarRetryActionListener();
                     }
                 });
         snackbar.postDelayed(new Runnable() {
@@ -84,6 +79,15 @@ public abstract class BaseActionActivity extends AppCompatActivity {
             }
         }, 500);
 
+    }
+
+    protected void snackBarRetryActionListener() {
+        Intent intent = getIntent();
+        overridePendingTransition(0, 0);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finish();
+        overridePendingTransition(0, 0);
+        startActivity(intent);
     }
 
     protected void showSnackbar(Snackbar snackbar) {

@@ -89,10 +89,6 @@ public class AppConstants {
     public static final int ROLE_OTP_USERS = 7;
     public static final int ROLE_PUBLIC_ANON = 8;
 
-    public static final String INTENT_EXTRA_CHANNEL_NAME = "channel";
-    public static final String LOGIN_TOKEN = "login_token";
-    public static final String CHANNEL_SUBSCRIPTION = "channel_to_be_subscribed_to";
-    public static final String MY_ROLE_IS = "my_role_is";
     public static final String LOGIN_RESPONSE_JSON = "login_response_json";
     public static final String LOGGED_IN_ATLEAST_ONCE = "login_status";
 
