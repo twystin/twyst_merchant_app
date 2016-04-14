@@ -65,7 +65,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="36dp"
                         android:gravity="center"
-                        android:text="OK"
+                        android:text="YES"
                         android:textColor="@android:color/white"
                         android:textSize="12dp" />
                 </FrameLayout>
