@@ -1,6 +1,7 @@
 package com.twsyt.merchant.service;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
@@ -39,6 +40,8 @@ public class HttpService {
 
         Cache cache = new Cache(context.getCacheDir(), 1024);
         okHttpClient.setCache(cache);
+//        okHttpClient.setConnectTimeout(1, TimeUnit.MINUTES);
+        Log.d("HttpService", String.valueOf(okHttpClient.getConnectTimeout()));
         RestAdapter jsonRestAdapter = new RestAdapter.Builder()
                 .setLogLevel(RestAdapter.LogLevel.FULL).setLog(new AndroidLog("Retrofit"))
                 .setLogLevel((AppConstants.IS_DEVELOPMENT) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)

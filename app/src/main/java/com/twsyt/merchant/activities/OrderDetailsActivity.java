@@ -340,7 +340,7 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
 
         orderUpdate = new OrderUpdate();
         orderUpdate.set_id(order.getOrderID());
-        orderUpdate.setAm_email(loginResp.getProfile().getEmail());
+        orderUpdate.setAm_email(loginResp.getEmail());
 
         chooseActions();
 

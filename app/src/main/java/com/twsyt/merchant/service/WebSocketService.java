@@ -95,10 +95,10 @@ public class WebSocketService extends IntentService implements FayeListener {
         channelName = "";
         switch (role) {
             case AppConstants.ROLE_ADMIN:
-                String email = "";
-                if (loginResp.getProfile() != null) {
+                String email = loginResp.getEmail();
+                /*if (loginResp.getProfile() != null) {
                     email = loginResp.getProfile().getEmail();
-                }
+                }*/
                 channelName = email.replace("@", "").replace(".", "");
                 break;
 

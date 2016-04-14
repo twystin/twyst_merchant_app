@@ -74,7 +74,8 @@ dependencies {
     compile "com.android.support:appcompat-v7:${ANDROID_SUPPORT_LIB_VERSION}"
     compile 'com.saulpower.fayeclient:library:1.1'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
-    compile 'com.squareup.okhttp:okhttp:2.7.2'
+    compile 'com.squareup.okhttp:okhttp-urlconnection:2.4.0'
+    compile 'com.squareup.okhttp:okhttp:2.4.0'
     compile 'com.google.code.gson:gson:2.4'
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'com.github.bumptech.glide:glide:3.7.0'

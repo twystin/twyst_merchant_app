@@ -13,6 +13,16 @@ public class LoginResponse implements Serializable {
     private int role;
     private Profile profile;
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    private String email;
+
 
     // This below object is added coz of flaw in our API.
     @SerializedName("data")
