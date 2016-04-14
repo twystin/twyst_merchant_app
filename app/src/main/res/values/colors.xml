@@ -9,7 +9,7 @@
     <color name="app_accent_color">#f59221</color>
     <color name="app_accent_color_transparent">#c8f47c20</color>
 
-    <color name="shadow">#dcdcdc</color>
+    <color name="card_header_background">#dcdcdc</color>
     <color name="greylines">#7d7d7d</color>
 
     <color name="white">#ffffff</color>

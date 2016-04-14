@@ -1,160 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    style="@style/card_view_style"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    android:background="@drawable/order_tracker_card_shadow"
-    android:orientation="vertical"
-    android:padding="10dp">
+    card_view:cardBackgroundColor="@color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/black"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingBottom="6dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="6dp">
-
-        <TextView
-            android:id="@+id/tv_timeStamp"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:drawablePadding="6dp"
-            android:gravity="center_vertical"
-            android:text="00:00 AM"
-            android:textColor="@android:color/white"
-            android:textSize="14dp" />
-
-        <TextView
-            android:id="@+id/tv_orderStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Delievered"
-            android:textColor="@android:color/white"
-            android:textSize="14dp" />
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginBottom="6dp"
-        android:layout_marginTop="6dp"
-        android:background="@color/greylines" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:background="?android:attr/selectableItemBackground"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="9"
-            android:orientation="vertical"
-            android:padding="6dp">
-
-            <TextView
-                android:id="@+id/tv_orderId"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
-                android:text="Order ID: TW1234ABCD"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tv_outletName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Kebabs for Life and Beyond" />
-
-        </LinearLayout>
-
-        <!--<TextView
-            android:id="@+id/tv_orderCost"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="3"
-            android:background="@drawable/order_tracker_amount_rect_bg"
+            android:layout_gravity="center_vertical"
+            android:background="@color/card_header_background"
             android:gravity="center"
-            android:padding="6dp"
-            android:text="Rs. 0000.00" />-->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="6dp">
+            android:orientation="horizontal"
+            android:padding="8dp">
 
             <TextView
-                android:id="@+id/tv_paymentType"
-                android:layout_width="wrap_content"
+                android:id="@+id/tv_timeStamp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="PAID ONLINE"
-                android:textColor="@android:color/holo_green_dark"
+                android:layout_weight="1"
+                android:drawablePadding="6dp"
+                android:gravity="center_vertical"
+                android:text="00:00 AM"
+                android:textColor="@android:color/black"
                 android:textSize="14dp" />
 
             <TextView
-                android:id="@+id/tv_orderCost"
+                android:id="@+id/tv_orderStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:text="Rs. 345"
-                android:textSize="16dp" />
+                android:text="Delievered"
+                android:textColor="@android:color/black"
+                android:textSize="14dp" />
 
         </LinearLayout>
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginBottom="6dp"
-        android:layout_marginTop="6dp"
-        android:background="@color/greylines" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/iv_userImage"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:src="@drawable/default_user_image" />
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="9"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="6dp">
+            android:padding="8dp">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="9"
+                    android:orientation="vertical"
+                    android:padding="6dp">
+
+                    <TextView
+                        android:id="@+id/tv_orderId"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="6dp"
+                        android:text="Order ID: TW1234ABCD"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_outletName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Kebabs for Life and Beyond" />
+
+                </LinearLayout>
+
+                <!--<TextView
+                    android:id="@+id/tv_orderCost"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:background="@drawable/order_tracker_amount_rect_bg"
+                    android:gravity="center"
+                    android:padding="6dp"
+                    android:text="Rs. 0000.00" />-->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="6dp">
+
+                    <TextView
+                        android:id="@+id/tv_paymentType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="PAID ONLINE"
+                        android:textColor="@android:color/holo_green_dark"
+                        android:textSize="14dp" />
+
+                    <TextView
+                        android:id="@+id/tv_orderCost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:text="Rs. 345"
+                        android:textSize="16dp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/tv_username"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
-                android:text="User Name" />
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="4dp"
+                android:background="@color/card_header_background" />
 
-            <TextView
-                android:id="@+id/tv_address"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:text="Address Line 1,Address Line 1,Address Line 1 " />
+                android:gravity="center"
+                android:orientation="horizontal">
 
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/iv_userImage"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/default_user_image" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="9"
+                    android:orientation="vertical"
+                    android:padding="6dp">
+
+                    <TextView
+                        android:id="@+id/tv_username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="6dp"
+                        android:text="User Name" />
+
+                    <TextView
+                        android:id="@+id/tv_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:text="Address Line 1,Address Line 1,Address Line 1 " />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
         </LinearLayout>
 
 
     </LinearLayout>
 
-</LinearLayout>
+</android.support.v7.widget.CardView>
