@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -52,7 +53,7 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
     String orderId;
     OrderStatusAdapter orderStatusAdapter;
     RecyclerView orderStatusRV;
-    public static final int REQUEST_CALL = 1;
+    public static final int REQUEST_CALL = 9999;
     public static final int USER = 0;
     public static final int OUTLET = 1;
     String userPhone;
@@ -66,6 +67,7 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
     LinearLayout abandonedLL;
     LinearLayout deliveredLL;
     LinearLayout orderActionsLL;
+    String mPhoneNum;
 
     BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -296,16 +298,30 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
         dialogView.findViewById(R.id.fOK).setOnClickListener(new View.OnClickListener() {
                                                                  @Override
                                                                  public void onClick(View v) {
-                                                                     if (ActivityCompat.checkSelfPermission(OrderDetailsActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                                                                         ActivityCompat.requestPermissions(OrderDetailsActivity.this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL);
-                                                                     }
-                                                                     Intent call = new Intent(Intent.ACTION_CALL);
-                                                                     call.setData(Uri.parse("tel:" + phone_number));
-                                                                     startActivity(call);
                                                                      dialog.dismiss();
+                                                                     mPhoneNum = phone_number;
+                                                                     if (ActivityCompat.checkSelfPermission(OrderDetailsActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                                                                         //    ActivityCompat#requestPermissions
+                                                                         // here to request the missing permissions, and then overriding
+                                                                         //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                                                         //                                          int[] grantResults)
+                                                                         // to handle the case where the user grants the permission. See the documentation
+                                                                         // for ActivityCompat#requestPermissions for more details.
+                                                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                                             requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL);
+                                                                         }
+                                                                     } else {
+                                                                         makeTheCall();
+                                                                     }
                                                                  }
                                                              }
         );
+    }
+
+    private void makeTheCall() {
+        Intent call = new Intent(Intent.ACTION_CALL);
+        call.setData(Uri.parse("tel:" + mPhoneNum));
+        startActivity(call);
     }
 
     @Override
@@ -315,15 +331,11 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
                     Toast.makeText(OrderDetailsActivity.this, "Call Permission granted", Toast.LENGTH_SHORT).show();
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-
+                    makeTheCall();
                 } else {
                     Toast.makeText(OrderDetailsActivity.this, "Call Permission Denied, Can not make the call", Toast.LENGTH_SHORT).show();
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+
                 }
                 return;
             }
