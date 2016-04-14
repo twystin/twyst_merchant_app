@@ -455,8 +455,9 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
             @Override
             public void success(BaseResponse baseResponse, Response response) {
                 if (baseResponse.isResponse()) {
-                    hideAllActionButtons();
-                    chooseActions();
+                    finish();
+//                    hideAllActionButtons();
+//                    chooseActions();
                 }
             }
 

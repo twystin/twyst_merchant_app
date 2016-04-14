@@ -5,16 +5,17 @@
     android:layout_height="94dp"
     android:background="@color/white"
     android:elevation="8dp"
-    android:visibility="gone"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:visibility="gone">
 
     <LinearLayout
         android:id="@+id/ll_accept"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:visibility="gone"
-        android:orientation="vertical">
+        android:background="?android:attr/selectableItemBackground"
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/iv_accepted"
@@ -45,8 +46,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:visibility="gone"
-        android:orientation="vertical">
+        android:background="?android:attr/selectableItemBackground"
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/iv_cancel"
@@ -77,8 +79,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:visibility="gone"
-        android:orientation="vertical">
+        android:background="?android:attr/selectableItemBackground"
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/iv_abandoned"
@@ -109,8 +112,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:visibility="gone"
-        android:orientation="vertical">
+        android:background="?android:attr/selectableItemBackground"
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/iv_dispatched"
@@ -140,8 +144,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:visibility="gone"
-        android:orientation="vertical">
+        android:background="?android:attr/selectableItemBackground"
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/iv_delivered"
