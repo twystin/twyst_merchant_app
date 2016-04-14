@@ -501,8 +501,8 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
         dialogView.findViewById(R.id.fOK).setOnClickListener(new View.OnClickListener() {
                                                                  @Override
                                                                  public void onClick(View v) {
-                                                                     updateOrderWithServer(action);
                                                                      dialog.dismiss();
+                                                                     updateOrderWithServer(action);
                                                                  }
                                                              }
         );
