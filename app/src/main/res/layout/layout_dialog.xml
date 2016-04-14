@@ -45,7 +45,6 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="36dp"
-                        android:background="#fafafa"
                         android:gravity="center"
                         android:text="Cancel"
                         android:textColor="#959595"
@@ -66,7 +65,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="36dp"
                         android:gravity="center"
-                        android:text="Call"
+                        android:text="OK"
                         android:textColor="@android:color/white"
                         android:textSize="12dp" />
                 </FrameLayout>

@@ -262,7 +262,7 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
 
     private void showDialogCall(final String phone_number, int FLAG) {
         AlertDialog.Builder builder = new AlertDialog.Builder(OrderDetailsActivity.this);
-        final View dialogView = LayoutInflater.from(OrderDetailsActivity.this).inflate(R.layout.dialog_call, null);
+        final View dialogView = LayoutInflater.from(OrderDetailsActivity.this).inflate(R.layout.layout_dialog, null);
         TextView tv = (TextView) dialogView.findViewById(R.id.tvTitle);
         switch (FLAG) {
             case USER:
@@ -385,7 +385,7 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
             rejectLL.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    updateOrderwithServer(AppConstants.REJECT);
+                    showDialogConfirmation(AppConstants.REJECT);
                 }
             });
         }
@@ -398,11 +398,12 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
             acceptLL.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    updateOrderwithServer(AppConstants.ACCEPT);
+                    showDialogConfirmation(AppConstants.ACCEPT);
                 }
             });
         }
     }
+
 
     private void showDispatchedButton() {
         makeActionsVisible();
@@ -411,7 +412,7 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
             dispatchedLL.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    updateOrderwithServer(AppConstants.DISPATCH);
+                    showDialogConfirmation(AppConstants.DISPATCH);
                 }
             });
         }
@@ -424,7 +425,7 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
             abandonedLL.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    updateOrderwithServer(AppConstants.ABANDONED);
+                    showDialogConfirmation(AppConstants.ABANDONED);
                 }
             });
         }
@@ -437,7 +438,7 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
             deliveredLL.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    updateOrderwithServer(AppConstants.DELIVERED);
+                    showDialogConfirmation(AppConstants.DELIVERED);
                 }
             });
         }
@@ -449,15 +450,13 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
         }
     }
 
-    private void updateOrderwithServer(String s) {
+    private void updateOrderWithServer(String s) {
         orderUpdate.setUpdate_type(s);
         HttpService.getInstance().putOrderUpdate(orderId, Utils.getUserToken(OrderDetailsActivity.this), orderUpdate, new Callback<BaseResponse>() {
             @Override
             public void success(BaseResponse baseResponse, Response response) {
                 if (baseResponse.isResponse()) {
                     finish();
-//                    hideAllActionButtons();
-//                    chooseActions();
                 }
             }
 
@@ -474,9 +473,40 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
         dispatchedLL.setVisibility(View.GONE);
         abandonedLL.setVisibility(View.GONE);
         deliveredLL.setVisibility(View.GONE);
-        if(orderActionsLL.getVisibility() == View.VISIBLE){
+        if (orderActionsLL.getVisibility() == View.VISIBLE) {
             orderActionsLL.setVisibility(View.GONE);
         }
+    }
+
+
+    private void showDialogConfirmation(final String action) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(OrderDetailsActivity.this);
+        final View dialogView = LayoutInflater.from(OrderDetailsActivity.this).inflate(R.layout.layout_dialog, null);
+        TextView tv = (TextView) dialogView.findViewById(R.id.tvTitle);
+        tv.setText("Do you wish to proceed?");
+        builder.setView(dialogView);
+        final AlertDialog dialog = builder.create();
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.show();
+
+        dialogView.findViewById(R.id.fCancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialogView.findViewById(R.id.fOK).setOnClickListener(new View.OnClickListener() {
+                                                                 @Override
+                                                                 public void onClick(View v) {
+                                                                     updateOrderWithServer(action);
+                                                                     dialog.dismiss();
+                                                                 }
+                                                             }
+        );
+
     }
 
 }
