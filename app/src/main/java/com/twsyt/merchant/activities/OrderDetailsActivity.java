@@ -59,7 +59,7 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
     String outletPhone;
     OrderUpdate orderUpdate;
     String orderStatus;
-
+    OrderAction orderPlacedAction;
     LinearLayout acceptLL;
     LinearLayout rejectLL;
     LinearLayout dispatchedLL;
@@ -75,6 +75,7 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
                 OrderHistory order = OrdersDataBaseSingleTon.getInstance(OrderDetailsActivity.this)
                         .getOrderFromOrderId(orderId);
                 actionList.clear();
+                actionList.add(orderPlacedAction);
                 actionList.addAll(order.getOrderActionsList());
                 orderStatusAdapter.notifyDataSetChanged();
             }
@@ -96,6 +97,7 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
         abandonedLL = (LinearLayout) findViewById(R.id.ll_abandoned);
         deliveredLL = (LinearLayout) findViewById(R.id.ll_delivered);
 
+        OrderAction firstAction = new OrderAction();
         setOnClickActions();
     }
 
@@ -110,6 +112,7 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
                                 OrdersDataBaseSingleTon.getInstance(OrderDetailsActivity.this).addOrUpdateOrder(orderId, order);
                                 OrdersDataBaseSingleTon.getInstance(OrderDetailsActivity.this).storeInSharedPrefs();
                                 actionList.clear();
+                                actionList.add(orderPlacedAction);
                                 actionList.addAll(order.getOrderActionsList());
                                 orderStatusAdapter.notifyDataSetChanged();
                             } else {
@@ -148,6 +151,11 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
     private void processExtraData() {
         orderId = getIntent().getStringExtra(AppConstants.INTENT_ORDER_ID);
         OrderHistory order = OrdersDataBaseSingleTon.getInstance(this).getOrderFromOrderId(orderId);
+        orderPlacedAction = new OrderAction();
+        orderPlacedAction.setActionTime(order.getOrderDate());
+        orderPlacedAction.setActionType("PLACED");
+        orderPlacedAction.setMessage("Order has been placed by the User.");
+        actionList.add(orderPlacedAction);
         updateOrderDetails(order);
     }
 
