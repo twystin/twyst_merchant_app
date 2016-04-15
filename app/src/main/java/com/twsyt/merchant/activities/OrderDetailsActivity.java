@@ -44,6 +44,7 @@ import com.twsyt.merchant.service.HttpService;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
+import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -69,6 +70,8 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
     LinearLayout deliveredLL;
     LinearLayout orderActionsLL;
     String mPhoneNum;
+    private CircularProgressBar circularProgressBar;
+    private LinearLayout circularProgressBar_ll;
 
     BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -478,6 +481,7 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
             public void success(BaseResponse baseResponse, Response response) {
                 if (baseResponse.isResponse()) {
                     finish();
+                    hideProgressHUDInLayout();
                 }
                 twystProgressHUD.dismiss();
                 hideSnackbar();
@@ -527,11 +531,32 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
                                                                  @Override
                                                                  public void onClick(View v) {
                                                                      dialog.dismiss();
+
+                                                                     if (circularProgressBar_ll == null)
+                                                                         circularProgressBar_ll = (LinearLayout) findViewById(R.id.circularProgressBar_ll);
+
+                                                                     if (circularProgressBar == null)
+                                                                         circularProgressBar = (CircularProgressBar) findViewById(R.id.circularProgressBar);
+
+                                                                     if (circularProgressBar != null) {
+                                                                         circularProgressBar.setVisibility(View.VISIBLE);
+                                                                     }
+                                                                     circularProgressBar_ll.setVisibility(View.VISIBLE);
+
                                                                      updateOrderWithServer(action);
                                                                  }
                                                              }
         );
 
     }
+
+    public void hideProgressHUDInLayout() {
+        if (circularProgressBar != null) {
+            circularProgressBar.progressiveStop();
+            circularProgressBar.setVisibility(View.GONE);
+        }
+        circularProgressBar_ll.setVisibility(View.GONE);
+    }
+
 
 }

@@ -392,6 +392,19 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/circularProgressBar_ll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="120dp"
+        android:gravity="center_horizontal"
+        android:visibility="gone">
+
+        <include
+            android:id="@+id/circularProgressBar"
+            layout="@layout/twyst_progress_hud" />
+    </LinearLayout>
+
     <include layout="@layout/layout_order_actions" />
 
 </LinearLayout>
