@@ -27,6 +27,7 @@ import com.google.gson.reflect.TypeToken;
 import com.twsyt.merchant.R;
 import com.twsyt.merchant.Util.AppConstants;
 import com.twsyt.merchant.Util.OrdersDataBaseSingleTon;
+import com.twsyt.merchant.Util.TwystProgressHUD;
 import com.twsyt.merchant.Util.Utils;
 import com.twsyt.merchant.adapters.OrderDetailsAdapter;
 import com.twsyt.merchant.adapters.OrderStatusAdapter;
@@ -99,7 +100,6 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
         abandonedLL = (LinearLayout) findViewById(R.id.ll_abandoned);
         deliveredLL = (LinearLayout) findViewById(R.id.ll_delivered);
 
-        OrderAction firstAction = new OrderAction();
         setOnClickActions();
     }
 
@@ -472,17 +472,22 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
 
     private void updateOrderWithServer(String s) {
         orderUpdate.setUpdate_type(s);
+        final TwystProgressHUD twystProgressHUD = TwystProgressHUD.show(this, false, null);
         HttpService.getInstance().putOrderUpdate(orderId, Utils.getUserToken(OrderDetailsActivity.this), orderUpdate, new Callback<BaseResponse>() {
             @Override
             public void success(BaseResponse baseResponse, Response response) {
                 if (baseResponse.isResponse()) {
                     finish();
                 }
+                twystProgressHUD.dismiss();
+                hideSnackbar();
             }
 
             @Override
             public void failure(RetrofitError error) {
-
+                twystProgressHUD.dismiss();
+                hideSnackbar();
+                handleRetrofitError(error);
             }
         });
     }

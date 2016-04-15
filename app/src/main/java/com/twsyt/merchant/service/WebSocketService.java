@@ -1,6 +1,5 @@
 package com.twsyt.merchant.service;
 
-import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -35,7 +34,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class WebSocketService extends IntentService implements FayeListener {
+public class WebSocketService extends PubSubStickyService implements FayeListener {
 
     public static boolean isRunning = false;
 
@@ -56,12 +55,12 @@ public class WebSocketService extends IntentService implements FayeListener {
     public void onCreate() {
         super.onCreate();
         isRunning = true;
+        Log.i(TAG, "OnCreate: creating webService instance");
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.i(TAG, "Starting Web Socket Service");
-
         getLoginInfo();
 
 //        try {
@@ -117,12 +116,20 @@ public class WebSocketService extends IntentService implements FayeListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.i(TAG, "onDestroy called in webService");
         OrdersDataBaseSingleTon.getInstance(WebSocketService.this).storeInSharedPrefs();
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        Log.i(TAG, "onTaskRemoved called in webService");
+        super.onTaskRemoved(rootIntent);
     }
 
     /**
      * FayeListener methods.
      */
+
     @Override
     public void connectedToServer() {
         Log.i(TAG, "Connected to Server");
@@ -130,7 +137,7 @@ public class WebSocketService extends IntentService implements FayeListener {
 
     @Override
     public void disconnectedFromServer() {
-        Log.i(TAG, "Disonnected from Server");
+        Log.i(TAG, "Disconnected from Server");
     }
 
     @Override
