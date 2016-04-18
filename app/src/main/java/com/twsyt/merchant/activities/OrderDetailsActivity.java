@@ -70,8 +70,6 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
     LinearLayout deliveredLL;
     LinearLayout orderActionsLL;
     String mPhoneNum;
-    private CircularProgressBar circularProgressBar;
-    private LinearLayout circularProgressBar_ll;
 
     BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -80,13 +78,18 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
             if (resultCode == AppConstants.DOWNLOAD_SUCCESS) {
                 OrderHistory order = OrdersDataBaseSingleTon.getInstance(OrderDetailsActivity.this)
                         .getOrderFromOrderId(orderId);
-                actionList.clear();
-                actionList.add(orderPlacedAction);
-                actionList.addAll(order.getOrderActionsList());
+                genActionList(order);
                 orderStatusAdapter.notifyDataSetChanged();
             }
         }
     };
+
+    private void genActionList(OrderHistory order) {
+        actionList.clear();
+        actionList.add(orderPlacedAction);
+        if (order.getOrderActionsList().size() != 0)
+            actionList.addAll(order.getOrderActionsList());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,9 +119,7 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
                                 OrderHistory order = orderHistoryBaseResponse.getData();
                                 OrdersDataBaseSingleTon.getInstance(OrderDetailsActivity.this).addOrUpdateOrder(orderId, order);
                                 OrdersDataBaseSingleTon.getInstance(OrderDetailsActivity.this).storeInSharedPrefs();
-                                actionList.clear();
-                                actionList.add(orderPlacedAction);
-                                actionList.addAll(order.getOrderActionsList());
+                                genActionList(order);
                                 orderStatusAdapter.notifyDataSetChanged();
                             } else {
                                 Toast.makeText(OrderDetailsActivity.this, orderHistoryBaseResponse.getMessage(), Toast.LENGTH_SHORT).show();
@@ -160,15 +161,12 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
         orderPlacedAction.setActionTime(order.getOrderDate());
         orderPlacedAction.setActionType("PLACED");
         orderPlacedAction.setMessage("Order has been placed by the User.");
-        actionList.add(orderPlacedAction);
         updateOrderDetails(order);
     }
 
     private void updateOrderDetails(OrderHistory orderHistory) {
         ArrayList<Items> itemsList = orderHistory.getItems();
-        if (orderHistory.getOrderActionsList().size() != 0) {
-            actionList.addAll(orderHistory.getOrderActionsList());
-        }
+        genActionList(orderHistory);
 
         LinearLayout callOutletLL = (LinearLayout) findViewById(R.id.ll_call_outlet);
         LinearLayout callUserLL = (LinearLayout) findViewById(R.id.ll_call_user);
@@ -476,12 +474,14 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
     private void updateOrderWithServer(String s) {
         orderUpdate.setUpdate_type(s);
         final TwystProgressHUD twystProgressHUD = TwystProgressHUD.show(this, false, null);
-        HttpService.getInstance().putOrderUpdate(orderId, Utils.getUserToken(OrderDetailsActivity.this), orderUpdate, new Callback<BaseResponse>() {
+        HttpService.getInstance().putOrderUpdate(orderId, Utils.getUserToken(OrderDetailsActivity.this), orderUpdate, new Callback<BaseResponse<OrderHistory>>() {
             @Override
-            public void success(BaseResponse baseResponse, Response response) {
+            public void success(BaseResponse<OrderHistory> baseResponse, Response response) {
                 if (baseResponse.isResponse()) {
+                    OrderHistory order = baseResponse.getData();
+                    OrdersDataBaseSingleTon.getInstance(OrderDetailsActivity.this).addOrUpdateOrder(orderId, order);
+                    OrdersDataBaseSingleTon.getInstance(OrderDetailsActivity.this).storeInSharedPrefs();
                     finish();
-                    hideProgressHUDInLayout();
                 }
                 twystProgressHUD.dismiss();
                 hideSnackbar();
@@ -531,32 +531,11 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
                                                                  @Override
                                                                  public void onClick(View v) {
                                                                      dialog.dismiss();
-
-                                                                     if (circularProgressBar_ll == null)
-                                                                         circularProgressBar_ll = (LinearLayout) findViewById(R.id.circularProgressBar_ll);
-
-                                                                     if (circularProgressBar == null)
-                                                                         circularProgressBar = (CircularProgressBar) findViewById(R.id.circularProgressBar);
-
-                                                                     if (circularProgressBar != null) {
-                                                                         circularProgressBar.setVisibility(View.VISIBLE);
-                                                                     }
-                                                                     circularProgressBar_ll.setVisibility(View.VISIBLE);
-
                                                                      updateOrderWithServer(action);
                                                                  }
                                                              }
         );
 
     }
-
-    public void hideProgressHUDInLayout() {
-        if (circularProgressBar != null) {
-            circularProgressBar.progressiveStop();
-            circularProgressBar.setVisibility(View.GONE);
-        }
-        circularProgressBar_ll.setVisibility(View.GONE);
-    }
-
 
 }

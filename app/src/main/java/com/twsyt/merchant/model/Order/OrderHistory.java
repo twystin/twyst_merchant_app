@@ -75,6 +75,15 @@ public class OrderHistory implements Serializable {
     @SerializedName("actions")
     private ArrayList<OrderAction> orderActionsList;
 
+    public boolean isNotified_am() {
+        return notified_am;
+    }
+
+    public void setNotified_am(boolean notified_am) {
+        this.notified_am = notified_am;
+    }
+
+    private boolean notified_am;
     public PaymentInfo getPaymentInfo() {
         return paymentInfo;
     }
@@ -93,6 +102,7 @@ public class OrderHistory implements Serializable {
     public void setUser(User user) {
         this.user = user;
     }
+
 
     @SerializedName("user")
     private User user;

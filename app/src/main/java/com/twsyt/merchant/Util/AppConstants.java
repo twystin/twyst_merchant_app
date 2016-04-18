@@ -28,7 +28,7 @@ public class AppConstants {
 
     public static final String ORDER_PENDING = "PENDING";
     public static final String ORDER_LATE_ACCEPT = "LATE_ACCEPT";
-    public static final String ORDER_LATE_DELIVERY = "LATE_DELIVERY";
+    public static final String ORDER_LATE_DELIVERY = "NOT_DELIVERED";
     public static final String ORDER_ACCEPTED = "ACCEPTED";
     public static final String ORDER_DISPATCHED = "DISPATCHED";
     public static final String ORDER_ASSUMED_DELIVERED = "ASSUMED_DELIVERED";
@@ -96,8 +96,8 @@ public class AppConstants {
     public static final String ACCEPT = "accept";
     public static final String REJECT = "reject";
     public static final String DISPATCH = "dispatch";
-    public static final String DELIVERED = "delivered";
-    public static final String ABANDONED = "abandoned";
+    public static final String DELIVERED = "deliver";
+    public static final String ABANDONED = "abandon";
 
     public static final String RETROFIT_FAILURE_ERROR = "retrofit_failure_error";
     public static final int DOWNLOAD_FAILED = 0;

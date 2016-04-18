@@ -91,13 +91,13 @@ public class WebSocketService extends PubSubStickyService implements FayeListene
 
         int role = loginResp.getRole();
         token = loginResp.getToken();
-        channelName = "";
-        switch (role) {
+        channelName = "console";
+        /*switch (role) {
             case AppConstants.ROLE_ADMIN:
                 String email = loginResp.getEmail();
-                /*if (loginResp.getProfile() != null) {
+                *//*if (loginResp.getProfile() != null) {
                     email = loginResp.getProfile().getEmail();
-                }*/
+                }*//*
                 channelName = email.replace("@", "").replace(".", "");
                 break;
 
@@ -107,7 +107,7 @@ public class WebSocketService extends PubSubStickyService implements FayeListene
 
             default:
                 channelName = "";
-        }
+        }*/
     }
 
     /**

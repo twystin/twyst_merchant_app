@@ -149,16 +149,22 @@ public class OrdersDataBaseSingleTon {
      * @param order   This is the complete order information.
      */
     public void addOrUpdateOrder(String orderId, OrderHistory order) {
+        if (order.getOrderStatus().equals(AppConstants.ORDER_PENDING) && order.isNotified_am()) {
+            order.setOrderStatus(AppConstants.ORDER_LATE_ACCEPT);
+        }
+
         String prevStatusOfOrder = null;
         if (mOrderIdMap.containsKey(orderId)) {
             prevStatusOfOrder = mOrderIdMap.get(orderId).getOrderStatus();
         }
-        String currStatusOfOrder = order.getOrderStatus();
-
-        if (!currStatusOfOrder.equals(prevStatusOfOrder) && (prevStatusOfOrder != null)) {
+//            if (!currStatusOfOrder.equals(prevStatusOfOrder) && (prevStatusOfOrder != null)) {
+        if (prevStatusOfOrder != null) {
             mOrderStatusMap.get(prevStatusOfOrder).remove(orderId);
         }
-        addOrderToOrderStatusMap(order.getOrderID(), currStatusOfOrder);
+
+        String currStatusOfOrder = order.getOrderStatus();
+        addOrderToOrderStatusMap(orderId, currStatusOfOrder);
+
         mOrderIdMap.put(orderId, order);
     }
 

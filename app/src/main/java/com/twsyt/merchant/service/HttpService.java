@@ -71,7 +71,7 @@ public class HttpService {
         twystService.getAllOrdersAM(token, callback);
     }
 
-    public void putOrderUpdate(String orderID, String token, OrderUpdate orderUpdate, Callback<BaseResponse> callback) {
+    public void putOrderUpdate(String orderID, String token, OrderUpdate orderUpdate, Callback<BaseResponse<OrderHistory>> callback) {
         twystService.putOrderUpdate(orderID, token, orderUpdate, callback);
     }
 
