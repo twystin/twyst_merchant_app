@@ -360,7 +360,7 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
         orderStatus = order.getOrderStatus();
 
         orderUpdate = new OrderUpdate();
-        orderUpdate.set_id(order.getOrderID());
+//        orderUpdate.set_id(order.getOrderID());
         orderUpdate.setAm_email(loginResp.getEmail());
 
         chooseActions();
@@ -388,9 +388,19 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
             }
 
             case AppConstants.ORDER_LATE_DELIVERY: {
+                boolean showDispatch = true;
                 showAbandonedButton();
-                showDispatchedButton();
                 showDeliveredButton();
+                if (actionList != null) {
+                    for (int i = 0; i < actionList.size(); i++) {
+                        if (actionList.get(i).getActionType().equals(AppConstants.ORDER_DISPATCHED)) {
+                            showDispatch = false;
+                            break;
+                        }
+                    }
+                }
+                if (showDispatch)
+                    showDispatchedButton();
                 break;
             }
 
@@ -538,4 +548,14 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        String s = getIntent().getStringExtra(AppConstants.INTENT_START_SOURCE);
+        if (s != null) {
+            if (s.equals(AppConstants.START_SOURCE_IS_NOTIFICATION)) {
+                startActivity(new Intent(OrderDetailsActivity.this, MainActivity.class));
+            }
+        }
+    }
 }

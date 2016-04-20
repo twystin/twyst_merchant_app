@@ -9,16 +9,19 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.twsyt.merchant.R;
 import com.twsyt.merchant.Util.AppConstants;
-import com.twsyt.merchant.Util.Utils;
 import com.twsyt.merchant.activities.OrderDetailsActivity;
+import com.twsyt.merchant.model.menu.TimeStamp;
 import com.twsyt.merchant.model.order.Address;
 import com.twsyt.merchant.model.order.OrderHistory;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class OrderTrackerRVAdapter extends RecyclerView.Adapter<OrderTrackerRVAdapter.MyViewHolder> {
 
@@ -55,9 +58,24 @@ public class OrderTrackerRVAdapter extends RecyclerView.Adapter<OrderTrackerRVAd
 
         // time stamp
         if (order.getOrderDate() != null) {
-            String time = Utils.getTimeStamp(order.getOrderDate()).getTime();
+
+            String orderDateOld = order.getOrderDate();
+            TimeStamp timeStamp = new TimeStamp();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("IST"));
+            DateFormat dateInstance = DateFormat.getDateInstance(DateFormat.MEDIUM);
+            DateFormat timeInstance = DateFormat.getTimeInstance(DateFormat.SHORT);
+            try {
+                Date d = sdf.parse(orderDateOld);
+                timeStamp.setDate(dateInstance.format(d));
+                timeStamp.setTime(timeInstance.format(d));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            String time = timeStamp.getDate() + " " + timeStamp.getTime();
             holder.tv_timeStamp.setText(time);
         }
+
 
         // Current status of the order
         holder.tv_orderStatus.setText(order.getOrderStatus());

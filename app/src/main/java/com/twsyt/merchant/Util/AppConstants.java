@@ -103,4 +103,6 @@ public class AppConstants {
     public static final int DOWNLOAD_FAILED = 0;
     public static final int DOWNLOAD_SUCCESS = 1;
     public static final String RETROFIT_FAILURE_NO_RESPONSE_MESSAGE = "RETROFIT_FAILURE_NO_RESPONSE_MESSAGE";
+    public static final String START_SOURCE_IS_NOTIFICATION = "start_source_is_notification";
+    public static final String INTENT_START_SOURCE = "intent_start_source";
 }
