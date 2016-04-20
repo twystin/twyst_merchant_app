@@ -4,26 +4,36 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.twsyt.merchant.R;
 import com.twsyt.merchant.Util.AppConstants;
 import com.twsyt.merchant.Util.OrdersDataBaseSingleTon;
+import com.twsyt.merchant.Util.TwystProgressHUD;
 import com.twsyt.merchant.Util.Utils;
 import com.twsyt.merchant.adapters.OrderTrackerFragmentAdapter;
 import com.twsyt.merchant.fragments.OrderTrackerPageFragment;
+import com.twsyt.merchant.model.BaseResponse;
+import com.twsyt.merchant.service.HttpService;
+import com.twsyt.merchant.service.WebSocketService;
 
 import java.util.List;
 
+import retrofit.Callback;
 import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class MainActivity extends BaseActionActivity {
+    private static final int MENU_ITEM_LOGOUT = 0;
     TabLayout slidingTabs_orderTracker;
     OrderTrackerFragmentAdapter mPagerAdapter;
     BroadcastReceiver mReceiver;
@@ -192,5 +202,49 @@ public class MainActivity extends BaseActionActivity {
             return false;
         }
         return true;
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, MENU_ITEM_LOGOUT, 0, "Logout");
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case MENU_ITEM_LOGOUT:
+                logout();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void logout() {
+        final TwystProgressHUD twystProgressHUD = TwystProgressHUD.show(this, false, null);
+        HttpService.getInstance().twystLogout(Utils.getUserToken(MainActivity.this), new Callback<BaseResponse<String>>() {
+            @Override
+            public void success(BaseResponse<String> stringBaseResponse, Response response) {
+                if (stringBaseResponse.isResponse()) {
+                    Toast.makeText(MainActivity.this, stringBaseResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                    SharedPreferences sharedPreferences = getSharedPreferences(AppConstants.PREFERENCE_SHARED_PREF_NAME, Context.MODE_PRIVATE);
+                    stopService(new Intent(MainActivity.this, WebSocketService.class));
+                    sharedPreferences.edit().clear().commit();
+                    OrdersDataBaseSingleTon.setInstanceNull();
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                }
+                twystProgressHUD.dismiss();
+                hideSnackbar();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                twystProgressHUD.dismiss();
+                hideSnackbar();
+                handleRetrofitError(error);
+            }
+        });
+
     }
 }

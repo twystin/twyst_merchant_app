@@ -23,6 +23,8 @@ import retrofit.client.OkClient;
  * Created by Raman on 3/30/2016.
  */
 public class HttpService {
+
+
     private static HttpService instance = new HttpService();
     private Context context;
 
@@ -74,5 +76,10 @@ public class HttpService {
     public void putOrderUpdate(String orderID, String token, OrderUpdate orderUpdate, Callback<BaseResponse<OrderHistory>> callback) {
         twystService.putOrderUpdate(orderID, token, orderUpdate, callback);
     }
+
+    public void twystLogout(String token, Callback<BaseResponse<String>> callback) {
+        twystService.twystLogout(token, callback);
+    }
+
 
 }

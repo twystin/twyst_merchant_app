@@ -8,27 +8,18 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 
 import com.twsyt.merchant.R;
 import com.twsyt.merchant.Util.AppConstants;
 import com.twsyt.merchant.Util.OrdersDataBaseSingleTon;
-import com.twsyt.merchant.Util.Utils;
 import com.twsyt.merchant.activities.MainActivity;
 import com.twsyt.merchant.adapters.OrderTrackerRVAdapter;
 import com.twsyt.merchant.model.order.OrderHistory;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -119,7 +110,7 @@ public class OrderTrackerPageFragment extends Fragment {
     }
 
     public void updateList() {
-        Log.d(LOG_TAG, "Checking for updateList call");
+//        Log.d(LOG_TAG, "Checking for updateList call");
         ArrayList<OrderHistory> orderList = OrdersDataBaseSingleTon.getInstance(getContext())
                 .getSortedOrdersList(AppConstants.ORDER_TRACK_TABS_LIST[mPosition]);
         orderTrackerRVAdapter.getOrderList().clear();

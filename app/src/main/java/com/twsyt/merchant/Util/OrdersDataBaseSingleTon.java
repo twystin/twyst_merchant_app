@@ -49,6 +49,11 @@ public class OrdersDataBaseSingleTon {
     private HashMap<String, ArrayList<String>> mOrderStatusMap;
 
     private static final Object mLock = new Object();
+
+    public static void setInstanceNull() {
+        OrdersDataBaseSingleTon.mInstance = null;
+    }
+
     private static OrdersDataBaseSingleTon mInstance;
 
     public static OrdersDataBaseSingleTon getInstance(Context context) {
@@ -231,7 +236,6 @@ public class OrdersDataBaseSingleTon {
                 }
             }
         }
-
         return groupedOrders;
     }
 

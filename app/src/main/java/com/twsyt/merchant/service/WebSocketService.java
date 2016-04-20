@@ -119,7 +119,7 @@ public class WebSocketService extends PubSubStickyService implements FayeListene
     public void onDestroy() {
         super.onDestroy();
         Log.i(TAG, "onDestroy called in webService");
-        OrdersDataBaseSingleTon.getInstance(WebSocketService.this).storeInSharedPrefs();
+        mClient.setFayeListener(null);
     }
 
     @Override

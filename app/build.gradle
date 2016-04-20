@@ -25,16 +25,16 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            resValue "drawable", "ic_launcher_icon", "@drawable/ic_launcher"
-//            resValue "string", "app_name", "Twyst Merchants"
+            resValue "drawable", "ic_launcher_custom", "@mipmap/ic_launcher"
+            resValue "string", "app_name", "Merchant"
         }
 
         debug {
             minifyEnabled false
             applicationIdSuffix ".debug"
             versionNameSuffix ".debug"
-//            resValue "drawable", "ic_launcher_icon", "@drawable/ic_launcher_debug"
-//            resValue "string", "app_name", "Twyst M Test"
+            resValue "drawable", "ic_launcher_custom", "@drawable/ic_launcher_debug"
+            resValue "string", "app_name", "MerchantTest"
         }
     }
 
