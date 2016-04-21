@@ -219,9 +219,9 @@ public class MainActivity extends BaseActionActivity {
                 logout();
                 break;
 
-            case R.id.action_checkinPanel:
+/*            case R.id.action_checkinPanel:
                 startActivity(new Intent(MainActivity.this, CheckinPanelActivity.class));
-                break;
+                break;*/
         }
         return super.onOptionsItemSelected(item);
     }
