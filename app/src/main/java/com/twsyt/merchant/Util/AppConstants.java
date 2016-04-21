@@ -1,5 +1,7 @@
 package com.twsyt.merchant.Util;
 
+import com.twsyt.merchant.BuildConfig;
+
 /**
  * Created by Raman on 3/30/2016.
  */
@@ -7,8 +9,10 @@ public class AppConstants {
 
 
     //    public static final String HOST = "http://192.168.0.113:3000";
-    public static final String HOST = "http://staging.twyst.in";
-    //    public static final String HOST = "https://twyst.in";
+//    public static final String HOST = "http://staging.twyst.in";
+    public static final String HOST = BuildConfig.HOST;
+//    public static final String HOST = "https://twyst.in";
+
     public static final String FAYE_HOST = HOST + "/faye/";
 
     public static final String ORDER_TRACKER_TYPE = "order_tracker_type";
