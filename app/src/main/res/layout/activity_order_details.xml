@@ -6,18 +6,18 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context="com.twsyt.merchant.activities.OrderDetailsActivity">
+    tools:context="com.twyst.merchant.activities.OrderDetailsActivity">
 
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
 
-    <com.twsyt.merchant.layout.CustomSwipeRefreshLayout
+    <com.twyst.merchant.layout.CustomSwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <include layout="@layout/content_order_details" />
 
-    </com.twsyt.merchant.layout.CustomSwipeRefreshLayout>
+    </com.twyst.merchant.layout.CustomSwipeRefreshLayout>
 </LinearLayout>

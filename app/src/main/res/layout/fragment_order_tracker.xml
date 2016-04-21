@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.twsyt.merchant.fragments.OrderTrackerPageFragment">
+    tools:context="com.twyst.merchant.fragments.OrderTrackerPageFragment">
 
     <!--Do not add padding in below view-->
     <android.support.v7.widget.RecyclerView

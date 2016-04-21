@@ -14,7 +14,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.twsyt.merchant"
+        applicationId "com.twyst.merchant"
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
