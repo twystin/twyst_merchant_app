@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -204,18 +205,22 @@ public class MainActivity extends BaseActionActivity {
         return true;
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, MENU_ITEM_LOGOUT, 0, "Logout");
-        return super.onCreateOptionsMenu(menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case MENU_ITEM_LOGOUT:
+            case R.id.action_logout:
                 logout();
+                break;
+
+            case R.id.action_checkinPanel:
+                startActivity(new Intent(MainActivity.this, CheckinPanelActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);
