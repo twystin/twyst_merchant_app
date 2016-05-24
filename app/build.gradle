@@ -25,7 +25,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            resValue "drawable", "ic_launcher_custom", "@mipmap/ic_launcher"
+
             resValue "string", "app_name", "Twyst Merchants"
             buildConfigField "String", "HOST", "\"https://twyst.in\""
         }
@@ -34,7 +34,7 @@ android {
             minifyEnabled false
             applicationIdSuffix ".debug"
             versionNameSuffix ".debug"
-            resValue "drawable", "ic_launcher_custom", "@drawable/ic_launcher_debug"
+
             resValue "string", "app_name", "TwystTest Merchants"
             buildConfigField "String", "HOST", "\"http://staging.twyst.in\""
         }

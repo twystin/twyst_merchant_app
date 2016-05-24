@@ -27,6 +27,9 @@ public class OrderHistory implements Serializable {
 
     String phone;
 
+    @SerializedName("phones")
+    private ArrayList<String> phoneList=new ArrayList<>();
+
     @SerializedName("delivery_experience")
     private double deliveryExperience;
 
@@ -41,6 +44,7 @@ public class OrderHistory implements Serializable {
 
     @SerializedName("order_cost")
     private Double orderCost;
+
 
     @SerializedName("cashback")
     private Double cashBack;
@@ -75,6 +79,14 @@ public class OrderHistory implements Serializable {
     @SerializedName("actions")
     private ArrayList<OrderAction> orderActionsList;
 
+    public ArrayList<String> getPhoneList() {
+        return phoneList;
+    }
+
+    public void setPhoneList(ArrayList<String> phoneList) {
+        this.phoneList = phoneList;
+    }
+    
     public boolean isNotified_am() {
         return notified_am;
     }

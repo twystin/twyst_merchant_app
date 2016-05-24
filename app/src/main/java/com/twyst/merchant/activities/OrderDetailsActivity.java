@@ -17,7 +17,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +31,7 @@ import com.twyst.merchant.Util.AppConstants;
 import com.twyst.merchant.Util.OrdersDataBaseSingleTon;
 import com.twyst.merchant.Util.TwystProgressHUD;
 import com.twyst.merchant.Util.Utils;
+import com.twyst.merchant.adapters.MultiPhoneListAdapter;
 import com.twyst.merchant.adapters.OrderDetailsAdapter;
 import com.twyst.merchant.adapters.OrderStatusAdapter;
 import com.twyst.merchant.layout.CustomSwipeRefreshLayout;
@@ -59,6 +62,7 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
     public static final int OUTLET = 1;
     String userPhone;
     String outletPhone;
+    ArrayList<String> outletPhoneList = new ArrayList<>();
     OrderUpdate orderUpdate;
     String orderStatus;
     OrderAction orderPlacedAction;
@@ -176,6 +180,8 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
             String userName = orderHistory.getUser().getFirst_name() + " " + orderHistory.getUser().getLast_name();
             userPhone = orderHistory.getUser().getPhone_number();
             outletPhone = orderHistory.getPhone();
+           outletPhoneList = orderHistory.getPhoneList();
+
 
             TextView userNameTV = (TextView) findViewById(R.id.tv_user_name);
             TextView userAddressTV = (TextView) findViewById(R.id.tv_user_address);
@@ -200,10 +206,24 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
                 callOutletLL.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        showDialogCall(outletPhone, OUTLET);
+                        if (outletPhoneList.size() > 1) {
+                            showListDialog();
+                        } else {
+                            showDialogCall(outletPhoneList.get(0), OUTLET);
+                        }
                     }
                 });
             }
+           /*
+           if (callOutletLL != null) {
+
+                callOutletLL.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showDialogCall(outletPhone, OUTLET);
+                    }
+                });
+            }*/
         }
 
         TextView orderCostTV = (TextView) findViewById(R.id.tv_order_amount);
@@ -231,6 +251,35 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
         if (paymentTV != null) {
             paymentTV.setText(paymentMode);
         }
+    }
+
+    private void showListDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater mInflater = LayoutInflater.from(this);
+        final View dialogView = mInflater.inflate(R.layout.manyphones_layout_dialog, null);
+
+
+        ListView listOutletphones = (ListView) dialogView.findViewById(R.id.listMenuOptions);
+
+        builder.setView(dialogView);
+
+
+        final AlertDialog dialog = builder.create();
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.show();
+
+        final MultiPhoneListAdapter multiPhoneAdapter = new MultiPhoneListAdapter(this, outletPhoneList);
+        listOutletphones.setAdapter(multiPhoneAdapter);
+
+        listOutletphones.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position,
+                                    long id) {
+                showDialogCall(outletPhoneList.get(position), OUTLET);
+                dialog.dismiss();
+            }
+        });
     }
 
     private void updateOrderDetails(ArrayList<Items> itemsList) {
@@ -321,6 +370,16 @@ public class OrderDetailsActivity extends BaseActionActivity implements Activity
     private void makeTheCall() {
         Intent call = new Intent(Intent.ACTION_CALL);
         call.setData(Uri.parse("tel:" + mPhoneNum));
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         startActivity(call);
     }
 
